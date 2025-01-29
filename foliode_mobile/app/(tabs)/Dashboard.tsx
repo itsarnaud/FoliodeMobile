@@ -1,12 +1,14 @@
 import React from "react";
 import { Image, View, Text, StyleSheet } from "react-native";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-
+import { ArrowUpRight } from "lucide-react-native";
 const Dashboard = () => {
   return (
     <View style={styles.container}>
       <View>
-         <Image style={styles.logoFoliode} source={require('../../assets/images/foliode-logo-text-blanc.png')}/>
+        <Image
+          style={styles.logoFoliode}
+          source={require("../../assets/images/foliode-logo-text-blanc.png")}
+        />
       </View>
       <View style={styles.headerContainer}>
         <Text style={styles.titlePage}>Premier texte</Text>
@@ -44,11 +46,7 @@ const Dashboard = () => {
             </View>
           </View>
           <View>
-            <IconSymbol
-              name="chevron.right"
-              color="#fff"
-              style={styles.arrow}
-            />
+            <ArrowUpRight style={styles.arrow} size={22} />
           </View>
         </View>
       </View>
@@ -160,6 +158,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     padding: 5,
     fontSize: 20,
+    color: "#FFFFFF",
   },
 });
 
