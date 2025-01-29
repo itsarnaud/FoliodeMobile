@@ -7,6 +7,13 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import {
+  House,
+  FolderCog,
+  Brain,
+  PenLine,
+  UserRound,
+} from "lucide-react-native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -14,36 +21,66 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: "absolute",
+        tabBarActiveTintColor: "#4E529E",
+        tabBarInactiveTintColor: "#777F89",
+        tabBarLabelStyle: {
+          fontSize: 12,
+          marginTop: -5,
+        },
+        tabBarStyle: {
+          position: 'absolute',
+          backgroundColor: '#0E0E0E',
+          paddingTop: 10,
+          paddingBottom: 16,
+          height: 78, 
+          borderTopWidth: 1,
+          shadowOffset: {
+            width: 0,
+            height: -2,
           },
-          default: {},
-        }),
+          shadowOpacity: 0.1,
+          shadowRadius: 3,
+          elevation: 5, 
+        },
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="Dashboard"
         options={{
           title: "Home",
-          // tabBarStyle: { display: 'none' },
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <House color={color} size={48} />,
         }}
       />
       <Tabs.Screen
-        name="login"
+        name="Project"
         options={{
-          title: "Login",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
-          ),
+          title: "Ajouter",
+          tabBarIcon: ({ color }) => <FolderCog color={color} size={48} />,
+        }}
+      />
+      <Tabs.Screen
+        name="Skills"
+        options={{
+          title: "Compétence",
+          tabBarIcon: ({ color }) => <Brain color={color} size={48} />,
+        }}
+      />
+      <Tabs.Screen
+        name="Edit"
+        options={{
+          title: "Editer",
+          tabBarIcon: ({ color }) => <PenLine color={color} size={48} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="Profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }) => <UserRound color={color} size={48} />,
         }}
       />
     </Tabs>
