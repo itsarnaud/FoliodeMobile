@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 500,
-    paddingHorizontal: 15,
     paddingRight: 45,
     marginTop: 7,
     marginBottom:13,
@@ -175,7 +174,6 @@ buttonText: {
   },
   name_row: {
     flexDirection: 'row',
-    marginLeft:15,
     gap:12,
   },
   half_input: {
