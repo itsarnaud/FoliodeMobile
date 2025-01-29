@@ -27,7 +27,7 @@ export default function HomeScreen() {
     <>
     <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.page}>
-        <Image style={styles.icon_foliode} source={require('../../assets/images/foliode-logo.png')}/>
+        <Image style={styles.icon_foliode} source={require('../assets/images/foliode-logo.png')}/>
         <Text style={styles.title}>Commencer Maintenant ! </Text>
         <Text style={styles.under_title}>Transformez vos projets en un portfolio professionnel</Text>
         <View style={styles.container_line}>
