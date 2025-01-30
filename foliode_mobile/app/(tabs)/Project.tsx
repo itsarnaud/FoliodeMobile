@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Image,
+  ScrollView,
   View,
   Text,
   StyleSheet,
@@ -8,7 +9,6 @@ import {
   TextInput,
   Platform,
 } from "react-native";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { FolderUp, ArrowUpRight } from "lucide-react-native";
 const Project = () => {
 
@@ -22,58 +22,89 @@ const Project = () => {
     input.click();
   };
   return (
-    <View style={styles.container}>
-      <View>
-        <Image
-          style={styles.logoFoliode}
-          source={require("../../assets/images/foliode-logo-text-blanc.png")}
-        />
-      </View>
-      <View style={styles.headerContainer}>
-        <Text style={styles.titlePage}>Premier texte</Text>
-        <Text style={styles.descText}>Deuxième texte</Text>
-      </View>
-      <View style={styles.formContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Nom de la competence"
-          placeholderTextColor="#7D7E83"
-        />
-        <TouchableOpacity
-          onPress={handleSelectImage}
-          style={[styles.textInput, styles.imageInput]}
-        >
-          <FolderUp color="#7D7E83" size={24} />
-          <Text style={styles.textImageInput}>Choisir une image</Text>
-        </TouchableOpacity>
+<>
+  <View style={styles.fixedHeader}>
+    <Image
+      style={styles.logoFoliode}
+      source={require("../../assets/images/foliode-logo-text-blanc.png")}
+    />
+  </View>
+  <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <View style={styles.headerContainer}>
+      <Text style={styles.titlePage}>Vos Projets</Text>
+      <Text style={styles.descText}>Vous pouvez ajouter vos projets ici</Text>
+    </View>
+    <View style={styles.formContainer}>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Nom du projet"
+        placeholderTextColor="#7D7E83"
+      />
+      <TextInput
+        style={styles.textInputLarge}
+        placeholder="Description du projet"
+        placeholderTextColor="#7D7E83"
+      />
+      <TextInput
+        style={styles.textInput}
+        placeholder="Nom du lien (Github, Dribble...)"
+        placeholderTextColor="#7D7E83"
+      />
+      <TextInput
+        style={styles.textInput}
+        placeholder="Url"
+        placeholderTextColor="#7D7E83"
+      />
+      <TouchableOpacity
+        onPress={handleSelectImage}
+        style={[styles.textInput, styles.imageInput]}
+      >
+        <FolderUp color="#7D7E83" size={24} />
+        <Text style={styles.textImageInput}>Choisir une image</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.button}
-          // onPress={() => navigation.navigate("RegisterScreen")}
-        >
-          <Text style={styles.buttonText}>Ajouter la compétence</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        // onPress={() => navigation.navigate("RegisterScreen")}
+      >
+        <Text style={styles.buttonText}>Ajouter le projet</Text>
+      </TouchableOpacity>
+    </View>
+    <View style={styles.card}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.titreCard}>Vos Projets</Text>
       </View>
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.titreCard}>Vos competence</Text>
+      <View style={styles.cardContent}>
+        <View style={styles.contentRight}>
+          <Image
+            source={{ uri: "https://picsum.photos/500/300?random=1" }}
+            style={styles.imageStyle}
+          />
+          <View style={styles.textRight}>
+            <Text style={styles.titreProjet}>Foliode</Text>
+          </View>
         </View>
-        <View style={styles.cardContent}>
-          <View style={styles.contentRight}>
-            <Image
-              source={{ uri: "https://picsum.photos/500/300?random=1" }}
-              style={styles.imageStyle}
-            />
-            <View style={styles.textRight}>
-              <Text style={styles.titreProjet}>Site de vente de sushi</Text>
-            </View>
+        <View>
+          <ArrowUpRight style={styles.arrow} size={22} />
+        </View>
+      </View>
+      <View style={styles.cardContent}>
+        <View style={styles.contentRight}>
+          <Image
+            source={{ uri: "https://picsum.photos/500/300?random=1" }}
+            style={styles.imageStyle}
+          />
+          <View style={styles.textRight}>
+            <Text style={styles.titreProjet}>Site de vente de sushi</Text>
           </View>
-          <View>
-            <ArrowUpRight style={styles.arrow} size={22} />
-          </View>
+        </View>
+        <View>
+          <ArrowUpRight style={styles.arrow} size={22} />
         </View>
       </View>
     </View>
+  </ScrollView>
+</>
   );
 };
 
@@ -82,6 +113,21 @@ const styles = StyleSheet.create({
     height: 35,
     width: 123,
     marginTop: 64,
+  },
+  fixedHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#000000',
+    zIndex: 1000,
+    paddingHorizontal: 15,
+    paddingBottom: 15,
+  },
+  contentContainer: {
+    paddingHorizontal: 15,
+    paddingBottom: 20,
+    paddingTop: 114, 
   },
   container: {
     backgroundColor: "#000000",
@@ -174,6 +220,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#141414",
     paddingHorizontal: 15,
     paddingVertical: 23.5,
+    borderRadius: 13,
+    color: "#FFFFFF",
+    fontSize: 16,
+  },
+  textInputLarge: {
+    backgroundColor: "#141414",
+    paddingHorizontal: 15,
+    paddingVertical: 36.5,
     borderRadius: 13,
     color: "#FFFFFF",
     fontSize: 16,
