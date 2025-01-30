@@ -36,7 +36,7 @@ const Skills = () => {
       <View style={styles.formContainer}>
         <TextInput
           style={styles.textInput}
-          placeholder="Nom de la competence"
+          placeholder="Nom de la compétence"
           placeholderTextColor="#7D7E83"
         />
         <TouchableOpacity
@@ -56,7 +56,7 @@ const Skills = () => {
       </View>
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.titreCard}>Vos competence</Text>
+          <Text style={styles.titreCard}>Vos compétences</Text>
         </View>
         <View style={styles.cardContent}>
           <View style={styles.contentRight}>

@@ -11,7 +11,7 @@ const Dashboard = () => {
         />
       </View>
       <View style={styles.headerContainer}>
-        <Text style={styles.titlePage}>Ponjour, Timothé</Text>
+        <Text style={styles.titlePage}>Bonjour, Timothé</Text>
         <Text style={styles.descText}>Ajouter</Text>
       </View>
       <View style={styles.cardRow}>
