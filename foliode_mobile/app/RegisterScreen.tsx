@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
   page: {
     backgroundColor: "#000",
-    marginHorizontal: 15,
+     paddingHorizontal: 15,
   },
   arrow: {
     marginLeft: 2,
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   input: {
-    width: "100%",
+    flex: 1,
     height: 57,
     backgroundColor: "#23232D",
     borderRadius: 8,
