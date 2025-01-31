@@ -8,9 +8,8 @@ type RootStackParamList = {
   Home: undefined;
   LoginScreen: undefined;
   RegisterScreen: undefined;
-  Project: undefined;
-  "(tabs)": { screen: string };
 };
+
 type HomeScreenNavigationProp = NavigationProp<RootStackParamList, 'Home'>;
 
 export default function HomeScreen() {
@@ -21,7 +20,7 @@ export default function HomeScreen() {
   }
 
   function GoToSignIn() {
-    navigation.navigate('(tabs)', { screen: 'Project' });
+    navigation.navigate('LoginScreen' );
   }
 
   return (
