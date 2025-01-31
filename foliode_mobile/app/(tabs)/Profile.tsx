@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, View, Text, StyleSheet, ScrollView } from "react-native";
+import { Image, View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from "react-native";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 
 const Profile = () => {
@@ -15,49 +15,59 @@ const Profile = () => {
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
      
       <View style={styles.headerContainer}>
-        <Text style={styles.titlePage}>Premier texte</Text>
-        <Text style={styles.descText}>Deuxième texte</Text>
+        <Text style={styles.titlePage}>Profile</Text>
+        <Text style={styles.descText}>Vous pouvez modifier les informations de votre profil ici</Text>
       </View>
-      <View style={styles.cardRow}>
-        <View style={[styles.card, styles.littlecard]}>
-          <Text style={styles.titreCard}>Votre Note</Text>
-          <Text style={styles.paraCard}>.../20</Text>
-        </View>
-        <View style={[styles.card, styles.littlecard]}>
-          <Text style={styles.titreCard}>Votre Note</Text>
-          <Text style={styles.paraCard}>.../20</Text>
-        </View>
-      </View>
-      <View style={[styles.card, { marginBottom: 20 }]}>
-        <Text style={styles.titreCard}>Nombre de projets</Text>
-        <Text style={styles.paraCard}>4</Text>
-      </View>
-
+      <View style={styles.formContainer}>
       <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.titreCard}>Titre Header</Text>
-          <Text style={styles.titreCard}>Texte droite</Text>
-        </View>
-        <View style={styles.cardContent}>
-          <View style={styles.contentRight}>
-            <Image
-              source={{ uri: "https://picsum.photos/500/300?random=1" }}
-              style={styles.imageStyle}
-            />
-            <View style={styles.textRight}>
-              <Text style={styles.titreProjet}>Site de vente de sushi</Text>
-              <Text style={styles.itemText}>12/02/03</Text>
-            </View>
-          </View>
-          <View>
-            <IconSymbol
-              name="chevron.right"
-              color="#fff"
-              style={styles.arrow}
-            />
-          </View>
-        </View>
+      <Text style={styles.titreCard}>Nom</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Royer"
+        placeholderTextColor="#7D7E83"
+      />
       </View>
+      <View style={styles.card}>
+      <Text style={styles.titreCard}>Prénom</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Arnaud"
+        placeholderTextColor="#7D7E83"
+      />
+      </View>
+      <View style={styles.card}>
+      <Text style={styles.titreCard}>Nom d'utilisateur</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="cestarnaud"
+        placeholderTextColor="#7D7E83"
+      />
+      </View>
+      <View style={styles.card}>
+      <Text style={styles.titreCard}>Email</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="arnaud.royer@gmail.com"
+        placeholderTextColor="#7D7E83"
+      />
+      </View>
+      <View style={styles.card}>
+      <Text style={styles.titreCard}>Mot de passe</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Votre mot de passe"
+        placeholderTextColor="#7D7E83"
+      />
+      </View>
+     
+
+      <TouchableOpacity
+        style={styles.button}
+        // onPress={() => navigation.navigate("RegisterScreen")}
+      >
+        <Text style={styles.buttonText}>Modifier</Text>
+      </TouchableOpacity>
+    </View>
     </ScrollView>
     </>
   );
@@ -102,7 +112,6 @@ const styles = StyleSheet.create({
     marginBottom: 11,
   },
   card: {
-    padding: 16,
     backgroundColor: "#141414",
     borderRadius: 8,
   },
@@ -117,6 +126,8 @@ const styles = StyleSheet.create({
   titreCard: {
     color: "#FFFFFF",
     fontSize: 14,
+    paddingLeft: 10,
+    paddingTop: 10,
   },
 
   //! Projet Card
@@ -181,6 +192,29 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingBottom: 20,
     paddingTop: 100, 
+  },
+  
+  formContainer: {
+    gap: 16,
+    marginBottom: 24,
+  },
+  textInput: {
+    backgroundColor: "#141414",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 13,
+    color: "#FFFFFF",
+    fontSize: 16,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: "#3E3F92",
+    paddingVertical: 11,
+    borderRadius: 100,
+    alignItems: "center",
   },
 });
 
