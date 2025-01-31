@@ -25,17 +25,17 @@ export default function TabLayout() {
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarActiveTintColor: "#4E529E",
-        tabBarInactiveTintColor: "#777F89",
+        tabBarInactiveTintColor: "#8F98A4",
         tabBarLabelStyle: {
           fontSize: 12,
-          marginTop: -5,
+          marginTop: 0,
         },
         tabBarStyle: {
           position: 'absolute',
           backgroundColor: '#0E0E0E',
           paddingTop: 10,
           paddingBottom: 16,
-          height: 78, 
+          height: 100, 
           borderTopWidth: 1,
           shadowOffset: {
             width: 0,
@@ -51,28 +51,28 @@ export default function TabLayout() {
         name="Dashboard"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <House color={color} size={48} />,
+          tabBarIcon: ({ color }) => <House color={color} size={24} />,
         }}
       />
       <Tabs.Screen
         name="Project"
         options={{
           title: "Ajouter",
-          tabBarIcon: ({ color }) => <FolderCog color={color} size={48} />,
+          tabBarIcon: ({ color }) => <FolderCog color={color} size={24} />,
         }}
       />
       <Tabs.Screen
         name="Skills"
         options={{
           title: "Compétence",
-          tabBarIcon: ({ color }) => <Brain color={color} size={48} />,
+          tabBarIcon: ({ color }) => <Brain color={color} size={24} />,
         }}
       />
       <Tabs.Screen
         name="Edit"
         options={{
           title: "Editer",
-          tabBarIcon: ({ color }) => <PenLine color={color} size={48} />,
+          tabBarIcon: ({ color }) => <PenLine color={color} size={24} />,
         }}
       />
 
@@ -80,7 +80,7 @@ export default function TabLayout() {
         name="Profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => <UserRound color={color} size={48} />,
+          tabBarIcon: ({ color }) => <UserRound color={color} size={24} />,
         }}
       />
     </Tabs>

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
+  ScrollView
 } from "react-native";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { FolderUp, ArrowUpRight } from "lucide-react-native";
@@ -22,16 +23,19 @@ const Skills = () => {
     input.click();
   };
   return (
-    <View style={styles.container}>
-      <View>
-        <Image
-          style={styles.logoFoliode}
-          source={require("../../assets/images/foliode-logo-text-blanc.png")}
-        />
-      </View>
+    <>
+      <View style={styles.fixedHeader}>
+            <Image
+              style={styles.logoFoliode}
+              source={require("../../assets/images/foliode-logo-text-blanc.png")}
+            />
+          </View>
+
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+     
       <View style={styles.headerContainer}>
-        <Text style={styles.titlePage}>Premier texte</Text>
-        <Text style={styles.descText}>Deuxième texte</Text>
+        <Text style={styles.titlePage}>Compétences</Text>
+        <Text style={styles.descText}>Vous pouvez ajouter vos compétences ici</Text>
       </View>
       <View style={styles.formContainer}>
         <TextInput
@@ -73,7 +77,8 @@ const Skills = () => {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
+    </>
   );
 };
 
@@ -206,6 +211,21 @@ const styles = StyleSheet.create({
   textImageInput: {
     color: "#7D7E83",
     marginLeft: 8,
+  },
+  
+  fixedHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#000000',
+    zIndex: 1000,
+    paddingHorizontal: 15,
+    paddingBottom: 15,
+  },
+  contentContainer: {
+    paddingBottom: 20,
+    paddingTop: 100, 
   },
 });
 

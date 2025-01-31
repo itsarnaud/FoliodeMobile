@@ -65,12 +65,15 @@ const LoginScreen = () => {
           Créé en un !
         </Text>
       </Text>
+      
+      <View style={styles.containerSubmit}>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("RegisterScreen")}
       >
         <Text style={styles.buttonText}>Se connecter</Text>
       </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -131,7 +134,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   input: {
-    width: 350,
+    width: "100%",
     height: 57,
     backgroundColor: "#23232D",
     paddingRight: 45,
@@ -153,7 +156,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-    marginBottom: 15,
+    marginBottom: "auto",
     display: "flex",
   },
   buttonText: {
@@ -183,6 +186,9 @@ const styles = StyleSheet.create({
     color: "#3E3F92",
     fontWeight: "bold",
   },
+  containerSubmit: {
+    height: "12%",
+    },
 });
 
 export default LoginScreen;

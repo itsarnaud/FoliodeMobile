@@ -1,15 +1,18 @@
 import React from "react";
-import { Image, View, Text, StyleSheet } from "react-native";
+import { Image, View, Text, StyleSheet, ScrollView } from "react-native";
 import { ArrowUpRight } from "lucide-react-native";
 const Dashboard = () => {
   return (
-    <View style={styles.container}>
-      <View>
+<>
+     <View style={styles.fixedHeader}>
         <Image
           style={styles.logoFoliode}
           source={require("../../assets/images/foliode-logo-text-blanc.png")}
         />
       </View>
+
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+     
       <View style={styles.headerContainer}>
         <Text style={styles.titlePage}>Bonjour, Timothé</Text>
         <Text style={styles.descText}>Ajouter</Text>
@@ -50,7 +53,8 @@ const Dashboard = () => {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
+    </>
   );
 };
 
@@ -159,6 +163,20 @@ const styles = StyleSheet.create({
     padding: 5,
     fontSize: 20,
     color: "#FFFFFF",
+  },
+  fixedHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#000000',
+    zIndex: 1000,
+    paddingHorizontal: 15,
+    paddingBottom: 15,
+  },
+  contentContainer: {
+    paddingBottom: 20,
+    paddingTop: 100, 
   },
 });
 

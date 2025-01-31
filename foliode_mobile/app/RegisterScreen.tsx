@@ -26,9 +26,9 @@ const RegisterScreen = () => {
       <TouchableOpacity onPress={() => navigation.navigate("index")}>
         <ArrowLeft style={styles.arrow} color="#fff" size={22} />
       </TouchableOpacity>
-      <Text style={styles.title}>Bon Retour !</Text>
+      <Text style={styles.title}>Bienvenue !</Text>
       <Text style={styles.under_title}>
-        Entrez votre email et votre mot de passe pour vous connecter
+        Entrez vottre Nom/Prénom, Email et Mot de passe pour vous inscrire
       </Text>
 
       <View style={styles.firstContainer}>
@@ -43,7 +43,7 @@ const RegisterScreen = () => {
           </View>
         </View>
         <View style={styles.containerInput}>
-          <Text style={styles.text_input}>Nom</Text>
+          <Text style={styles.text_input}>Prénom</Text>
           <View style={styles.container_input}>
             <TextInput
               style={[styles.input, styles.half_input]}
@@ -98,12 +98,15 @@ const RegisterScreen = () => {
           Créé en un !
         </Text>
       </Text>
+      <View style={styles.containerSubmit}>
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("RegisterScreen")}
       >
-        <Text style={styles.buttonText}>Se connecter</Text>
+        <Text style={styles.buttonText}>S'inscrire</Text>
       </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -198,8 +201,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-    marginBottom: 15,
+    // marginBottom: 15,
     display: "flex",
+    marginTop: "auto",
+
   },
   buttonText: {
     color: "#fff",
@@ -210,7 +215,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#fff",
     textAlign: "center",
-    marginBottom: 150,
+    
   },
   container_line: {
     flexDirection: "row",
@@ -228,5 +233,8 @@ const styles = StyleSheet.create({
     color: "#3E3F92",
     fontWeight: "bold",
   },
+  containerSubmit: {
+    height: "12%",
+    }
 });
 export default RegisterScreen;
