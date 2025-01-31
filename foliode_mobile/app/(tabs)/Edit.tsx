@@ -7,16 +7,19 @@ const [isCheckedTemplate, setIsCheckedTemplate] = useState(false);
 const [isCheckedPreset, setIsCheckedPreset] = useState(false);
 
   return (
-    <ScrollView style={styles.container}>
-      <View>
-        <Image
-          style={styles.logoFoliode}
-          source={require("../../assets/images/foliode-logo-text-blanc.png")}
-        />
-      </View>
+    <>
+        <View style={styles.fixedHeader}>
+                <Image
+                  style={styles.logoFoliode}
+                  source={require("../../assets/images/foliode-logo-text-blanc.png")}
+                />
+              </View>
+
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+     
       <View style={styles.headerContainer}>
-        <Text style={styles.titlePage}>Premier texte</Text>
-        <Text style={styles.descText}>Deuxième texte</Text>
+        <Text style={styles.titlePage}>Editer</Text>
+        <Text style={styles.descText}>Personnaliser votre portfolio ici</Text>
       </View>
       <View style={[styles.card, { marginBottom: 20 }]}>
         <Text style={styles.titreCard}>Les templates</Text>
@@ -102,6 +105,7 @@ const [isCheckedPreset, setIsCheckedPreset] = useState(false);
         </View>
       </View>
     </ScrollView>
+    </>
   );
 };
 
@@ -216,7 +220,21 @@ const styles = StyleSheet.create({
   },
   textPresetCheckbox: {
     color: "#FFFFFF",
-  }
+  },
+  fixedHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#000000',
+    zIndex: 1000,
+    paddingHorizontal: 15,
+    paddingBottom: 15,
+  },
+  contentContainer: {
+    paddingBottom: 20,
+    paddingTop: 100, 
+  },
 });
 
 export default Edit;

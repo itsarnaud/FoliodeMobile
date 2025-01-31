@@ -20,7 +20,7 @@ export default function HomeScreen() {
   }
 
   function GoToSignIn() {
-    navigation.navigate('LoginScreen');
+    navigation.navigate('LoginScreen' );
   }
 
   return (
@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-    margin: 17,
+    height: "12%",
+
   },
 });  

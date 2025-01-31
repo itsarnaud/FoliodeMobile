@@ -1,13 +1,19 @@
 import React from "react";
-import { Image, View, Text, StyleSheet } from "react-native";
+import { Image, View, Text, StyleSheet, ScrollView } from "react-native";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 
 const Profile = () => {
   return (
-    <View style={styles.container}>
-      <View>
-         <Image style={styles.logoFoliode} source={require('../../assets/images/foliode-logo-text-blanc.png')}/>
-      </View>
+    <>
+      <View style={styles.fixedHeader}>
+                    <Image
+                      style={styles.logoFoliode}
+                      source={require("../../assets/images/foliode-logo-text-blanc.png")}
+                    />
+                  </View>
+
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+     
       <View style={styles.headerContainer}>
         <Text style={styles.titlePage}>Premier texte</Text>
         <Text style={styles.descText}>Deuxième texte</Text>
@@ -52,7 +58,8 @@ const Profile = () => {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
+    </>
   );
 };
 
@@ -160,6 +167,20 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     padding: 5,
     fontSize: 20,
+  },
+  fixedHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#000000',
+    zIndex: 1000,
+    paddingHorizontal: 15,
+    paddingBottom: 15,
+  },
+  contentContainer: {
+    paddingBottom: 20,
+    paddingTop: 100, 
   },
 });
 
