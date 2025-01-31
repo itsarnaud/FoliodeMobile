@@ -15,7 +15,7 @@ const Profile = () => {
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
      
       <View style={styles.headerContainer}>
-        <Text style={styles.titlePage}>Profile</Text>
+        <Text style={styles.titlePage}>Profil</Text>
         <Text style={styles.descText}>Vous pouvez modifier les informations de votre profil ici</Text>
       </View>
       <View style={styles.formContainer}>
