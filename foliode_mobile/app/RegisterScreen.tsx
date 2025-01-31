@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import {
@@ -21,7 +22,7 @@ const RegisterScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <View style={styles.page}>
+    <ScrollView style={styles.page}>
       <View style={styles.header}></View>
       <TouchableOpacity onPress={() => navigation.navigate("index")}>
         <ArrowLeft style={styles.arrow} color="#fff" size={22} />
@@ -107,7 +108,7 @@ const RegisterScreen = () => {
         <Text style={styles.buttonText}>S'inscrire</Text>
       </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
   under_title: {
     color: "#7D7E83",
     fontSize: 18,
-    marginBottom: 55,
+    marginBottom: 40,
     width: 334,
   },
   text_input: {
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
     gap: 10,
     // marginBottom: 15,
     display: "flex",
-    marginTop: "auto",
+    marginTop: 40,
 
   },
   buttonText: {
@@ -234,7 +235,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   containerSubmit: {
-    height: "12%",
     }
 });
 export default RegisterScreen;

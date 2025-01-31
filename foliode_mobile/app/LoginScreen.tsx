@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { Mail, ArrowLeft, LockKeyhole, Eye, EyeOff } from "lucide-react-native";
@@ -12,7 +13,7 @@ const LoginScreen = () => {
   const navigation = useNavigation<NavigationProp<any>>();
   const [showPassword, setShowPassword] = useState(false);
   return (
-    <View style={styles.page}>
+    <ScrollView style={styles.page}>
       <View style={styles.header}></View>
       <TouchableOpacity onPress={() => navigation.navigate("index")}>
         <ArrowLeft style={styles.arrow} color="#fff" size={24} />
@@ -66,7 +67,7 @@ const LoginScreen = () => {
         </Text>
       </Text>
       
-      <View style={styles.containerSubmit}>
+      <View>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("RegisterScreen")}
@@ -74,7 +75,7 @@ const LoginScreen = () => {
         <Text style={styles.buttonText}>Se connecter</Text>
       </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
   under_title: {
     color: "#7D7E83",
     fontSize: 18,
-    marginBottom: 55,
+    marginBottom: 40,
     width: 334,
   },
   text_input: {
@@ -156,8 +157,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
-    marginBottom: "auto",
     display: "flex",
+    marginTop:40,
   },
   buttonText: {
     color: "#fff",
@@ -186,9 +187,7 @@ const styles = StyleSheet.create({
     color: "#3E3F92",
     fontWeight: "bold",
   },
-  containerSubmit: {
-    height: "12%",
-    },
+
 });
 
 export default LoginScreen;

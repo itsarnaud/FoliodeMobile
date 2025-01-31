@@ -41,6 +41,8 @@ const Project = () => {
         placeholderTextColor="#7D7E83"
       />
       <TextInput
+        multiline = {true}
+        numberOfLines = {4}
         style={styles.textInputLarge}
         placeholder="Description du projet"
         placeholderTextColor="#7D7E83"
@@ -226,7 +228,8 @@ const styles = StyleSheet.create({
   textInputLarge: {
     backgroundColor: "#141414",
     paddingHorizontal: 15,
-    paddingVertical: 36.5,
+    paddingTop: 23.5,
+    paddingBottom: 50,
     borderRadius: 13,
     color: "#FFFFFF",
     fontSize: 16,
