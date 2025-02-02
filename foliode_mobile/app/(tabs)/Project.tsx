@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  ScrollView,
-  View,
-  Platform,
-} from "react-native";
+import { ScrollView, View, Platform } from "react-native";
 import { globalStyles } from "@/app/styles/styles";
 
 import { Input } from "@/components/ui/Input";
@@ -27,27 +23,19 @@ const Project = () => {
   return (
     <>
       <HeaderLogo />
-      
-      <ScrollView
-        style={globalStyles.container}
-      >
+
+      <ScrollView style={globalStyles.container}>
         <HeaderTitle
           title="Vos Projets"
           description="Vous pouvez ajouter vos projets ici"
         />
-        <View  style={globalStyles.formContainer}>
-          <Input placeholder="Nom du projet" placeholderTextColor="#7D7E83" />
+        <View style={globalStyles.formContainer}>
+          <Input label="Email"/>
           <TextArea
-            placeholder="Description du projet"
-            placeholderTextColor="#7D7E83"
+            label="Description du projet"
           />
 
-          <Input
-            placeholder="Nom du lien (Github, Dribble...)"
-            placeholderTextColor="#7D7E83"
-          />
-
-          <Input placeholder="Url" placeholderTextColor="#7D7E83" />
+          <Input label="Email"/>
 
           <InputFile onPress={handleSelectImage} />
 

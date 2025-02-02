@@ -7,7 +7,7 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 100,
   },
   formContainer: {
-    gap: 16,
+    gap: 14,
     marginBottom: 24,
   },
   card: {

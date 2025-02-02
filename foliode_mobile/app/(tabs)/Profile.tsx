@@ -3,9 +3,8 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { ButtonFull } from "@/components/ui/ButtonFull";
 import { HeaderLogo } from "@/components/ui/HeaderLogo";
 import { HeaderTitle } from "@/components/ui/HeaderTexte";
-import { ProfileInput } from "@/components/ui/ProfileInput";
 import { globalStyles } from "@/app/styles/styles";
-
+import { Input } from "@/components/ui/Input";
 const Profile = () => {
   return (
     <>
@@ -18,11 +17,11 @@ const Profile = () => {
         />
 
         <View style={styles.formContainer}>
-          <ProfileInput label="Nom" placeholder="Hege" />
-          <ProfileInput label="Prénom" placeholder="Timothe" />
-          <ProfileInput label="Nom d'utilisateur" placeholder="Tims" />
-          <ProfileInput label="Email" placeholder="hegetimothe@gmail.com" />
-          <ProfileInput label="Mots de passe" placeholder="c'est caché mec" />
+          <Input label="Nom" />
+          <Input label="Prénom" />
+          <Input label="Nom d'utilisateur" />
+          <Input label="Email" />
+          <Input label="Mots de passe" />
           <ButtonFull text="Modifier" />
         </View>
       </ScrollView>

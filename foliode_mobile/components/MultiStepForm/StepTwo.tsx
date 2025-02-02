@@ -1,16 +1,15 @@
 import React from "react";
-import { View, Platform, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Platform } from "react-native";
 import { globalStyles } from "@/app/styles/styles";
 
-import { Input } from "@/components/ui/Input";
-import { InputFile } from "@/components/ui/InputFIle";
-import { ButtonFull } from "@/components/ui/ButtonFull";
-import { ProjectCard } from "@/components/ui/ProjectCardItem";
 import { HeaderTitle } from "@/components/ui/HeaderTexte";
 import { HeaderLogo } from "@/components/ui/HeaderLogo";
+import { Input } from "@/components/ui/Input";
+import { TextArea } from "@/components/ui/TextArea";
+import { InputFile } from "@/components/ui/InputFIle";
+import { ButtonFull } from "@/components/ui/ButtonFull";
 
-const Skills = () => {
-  // va faloir utilise expo image picker a la place
+const StepTow = () => {
   const handleSelectImage = () => {
     Platform.OS === "web";
     const input = document.createElement("input");
@@ -22,34 +21,27 @@ const Skills = () => {
   return (
     <>
       <HeaderLogo />
-
       <ScrollView style={globalStyles.container}>
         <HeaderTitle
-          title="Vos Projets"
+          title="MultistepForm"
           description="Vous pouvez ajouter vos projets ici"
         />
         <View style={globalStyles.formContainer}>
-           <Input label="Nom de la competence"/>
+          <Input label="Nom de la competence" />
           <InputFile onPress={handleSelectImage} />
 
           <ButtonFull text="Ajouter la compétence" />
         </View>
-        <ProjectCard
-          headerTitle="Vos compétences"
-          data={[
-            {
-              title: "Foliode",
-              image: "https://picsum.photos/500/300?random=1",
-            },
-            {
-              title: "Site de vente de sushi",
-              image: "https://picsum.photos/500/300?random=1",
-            },
-          ]}
-        />
       </ScrollView>
     </>
   );
 };
 
-export default Skills;
+const styles = StyleSheet.create({
+  formContainer: {
+    gap: 16,
+    marginBottom: 24,
+  },
+});
+
+export default StepTow;
