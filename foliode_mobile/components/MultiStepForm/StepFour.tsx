@@ -22,12 +22,7 @@ const StepTow = () => {
 
   return (
     <>
-      <HeaderLogo />
-      <ScrollView style={globalStyles.container}>
-        <HeaderTitle
-          title="MultistepForm"
-          description="Vous pouvez ajouter vos projets ici"
-        />
+      <ScrollView>
         <TemplateCard
           title="Les templates"
           isChecked={isCheckedTemplate}

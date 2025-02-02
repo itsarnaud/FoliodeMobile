@@ -20,12 +20,7 @@ const StepTow = () => {
   };
   return (
     <>
-      <HeaderLogo />
-      <ScrollView style={globalStyles.container}>
-        <HeaderTitle
-          title="MultistepForm"
-          description="Vous pouvez ajouter vos projets ici"
-        />
+      <ScrollView>
         <View style={globalStyles.formContainer}>
           <Input label="Titre du projet" />
           <TextArea label="Présentation" />

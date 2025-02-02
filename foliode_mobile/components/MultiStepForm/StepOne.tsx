@@ -10,12 +10,7 @@ import { TextArea } from "@/components/ui/TextArea";
 const StepOne = () => {
   return (
     <>
-      <HeaderLogo />
-      <ScrollView style={globalStyles.container}>
-        <HeaderTitle
-          title="MultistepForm"
-          description="Vous pouvez ajouter vos projets ici"
-        />
+      <ScrollView>
         <View style={styles.formContainer}>
           <Input label="Nom d’utilisateur" />
           <Input label="Titre de l’utilisateur" />
