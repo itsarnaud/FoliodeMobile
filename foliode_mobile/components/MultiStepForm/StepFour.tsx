@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ScrollView } from "react-native";
+import { StyleSheet, ScrollView, Platform } from "react-native";
 import { globalStyles } from "@/app/styles/styles";
 
 import { HeaderTitle } from "@/components/ui/HeaderTexte";
@@ -7,19 +7,22 @@ import { HeaderLogo } from "@/components/ui/HeaderLogo";
 import { TemplateCard } from "@/components/ui/Template/SelectTemplate";
 import { PresetCard } from "@/components/ui/Template/SelectPreset";
 
-const Edit = () => {
+const StepTow = () => {
+  const handleSelectImage = () => {
+    Platform.OS === "web";
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = () => {};
+    input.click();
+  };
+
   const [isCheckedTemplate, setIsCheckedTemplate] = useState(false);
   const [isCheckedPreset, setIsCheckedPreset] = useState(false);
 
   return (
     <>
-      <HeaderLogo />
-
-      <ScrollView style={globalStyles.container}>
-        <HeaderTitle
-          title="Vos Projets"
-          description="Vous pouvez ajouter vos projets ici"
-        />
+      <ScrollView>
         <TemplateCard
           title="Les templates"
           isChecked={isCheckedTemplate}
@@ -37,4 +40,11 @@ const Edit = () => {
   );
 };
 
-export default Edit;
+const styles = StyleSheet.create({
+  formContainer: {
+    gap: 16,
+    marginBottom: 24,
+  },
+});
+
+export default StepTow;

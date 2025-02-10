@@ -83,6 +83,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <UserRound color={color} size={24} />,
         }}
       />
+
+      <Tabs.Screen
+        name="MultiStepForm"
+        options={{
+          title: "MultiStepForm",
+          tabBarIcon: ({ color }) => <UserRound color={color} size={24} />,
+        }}
+      />
     </Tabs>
   );
 }
