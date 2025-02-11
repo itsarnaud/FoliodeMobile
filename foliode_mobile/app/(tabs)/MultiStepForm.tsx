@@ -9,7 +9,7 @@ import StepOne from "@/components/MultiStepForm/StepOne";
 import StepTwo from "@/components/MultiStepForm/StepTwo";
 import StepThree from "@/components/MultiStepForm/StepThree";
 import StepFour from "@/components/MultiStepForm/StepFour";
-// import ProgressBar from "@/components/MultiStepForm/ProgressBar";
+import { ButtonFull } from "@/components/ui/ButtonFull";
 
 const MultiStepForm = () => {
   const [step, setStep] = useState(1);
@@ -88,10 +88,11 @@ const MultiStepForm = () => {
             justifyContent: "space-between",
             marginTop: 20,
             alignItems: "center",
+            marginBottom: 50,
           }}
         >
-          {step > 1 && <Button title="Précédent" onPress={prevStep} />}
-          {step < steps.length && <Button title="Suivant" onPress={nextStep} />}
+         {step > 1 && <ButtonFull text="Précédent" onPress={prevStep} style={globalStyles.buttonPrev} />}
+         {step < steps.length && <ButtonFull text="Suivant" onPress={nextStep} style={globalStyles.buttonNext} />}
         </View>
       </ScrollView>
     </>
@@ -104,6 +105,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 30,
   },
   number: {
     height: 25,

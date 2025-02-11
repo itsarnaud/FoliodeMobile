@@ -12,8 +12,8 @@ const Dashboard = () => {
       <HeaderLogo />
       <ScrollView style={globalStyles.container}>
         <HeaderTitle
-          title="Vos Projets"
-          description="Vous pouvez ajouter vos projets ici"
+          title="Bonjour, Timothé"
+          description="Vous pouvez voir votre portfolio ici : "
         />
         <View style={styles.cardRow}>
           <Card title="Votre Note" note="../20" />
