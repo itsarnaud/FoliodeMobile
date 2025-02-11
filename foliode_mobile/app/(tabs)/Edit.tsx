@@ -17,8 +17,8 @@ const Edit = () => {
 
       <ScrollView style={globalStyles.container}>
         <HeaderTitle
-          title="Vos Projets"
-          description="Vous pouvez ajouter vos projets ici"
+          title="Editer votre portfolio"
+          description="Vous pouvez modifier le style de votre portfolio ici"
         />
         <TemplateCard
           title="Les templates"

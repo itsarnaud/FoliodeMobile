@@ -25,8 +25,8 @@ const Skills = () => {
 
       <ScrollView style={globalStyles.container}>
         <HeaderTitle
-          title="Vos Projets"
-          description="Vous pouvez ajouter vos projets ici"
+          title="Vos Compétences"
+          description="Vous pouvez ajouter vos compétences ici"
         />
         <View style={globalStyles.formContainer}>
            <Input label="Nom de la competence"/>
