@@ -1,19 +1,16 @@
 import axios from 'axios';
 
-
-const API_URL = process.env.IP_API;
-
-const data_login = {
-    email: 'tim',
-    password: 'tim',
-
-}
+import { IP_API } from '@env';
 
 
-axios.post(`${API_URL}/api/user/signin`, data_login)  
-    .then((response) => {
-        console.log(response.data);
-    })
-    .catch((error) => {
-        console.error(error);
-    });
+export const loginUser = async (userData: {
+    email: string;
+    password: string;
+  }) => {
+    try {
+      const response = await axios.post(`${IP_API}/api/user/signin`, userData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };

@@ -23,7 +23,7 @@ export default function HomeScreen() {
   }
 
   function GoToSignIn() {
-    navigation.navigate('(tabs)', { screen: 'MultiStepForm' });
+    navigation.navigate('LoginScreen');
   }
 
   return (
