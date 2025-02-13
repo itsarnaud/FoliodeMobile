@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   View,
   Text,
@@ -6,12 +7,46 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { Mail, ArrowLeft, LockKeyhole, Eye, EyeOff } from "lucide-react-native";
+import { loginUser} from "@/services/Api_POST";
+
 const LoginScreen = () => {
   const navigation = useNavigation<NavigationProp<any>>();
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleLogin = async () => {
+    if (!formData.email || !formData.password) {
+      Alert.alert(
+        "Veuillez remplir tous les champs.",
+      );
+      return;
+    }
+  
+    try {
+      const response = await loginUser(formData);
+      navigation.navigate('(tabs)', { screen: 'LoginScreen' });
+    } catch (error: any) {
+      if (error.response && error.response.status === 400) {
+        Alert.alert(
+          "Erreur de connexion",
+          error.response.data.error
+        );
+      } else {
+        Alert.alert(
+          "Erreur de connexion",
+          "Impossible de se connecter. Veuillez vérifier votre connexion internet."
+        );
+      }
+    }
+  };
+  
   return (
     <ScrollView style={styles.page}>
       <View style={styles.header}></View>
@@ -29,7 +64,10 @@ const LoginScreen = () => {
           style={styles.input}
           placeholder="Email"
           placeholderTextColor="#fff"
-        />
+          onChangeText={(text) =>
+            setFormData({ ...formData, email: text })
+          }
+          value={formData.email} />
       </View>
       <Text style={styles.text_input}>Mot de passe</Text>
       <View style={styles.container_input}>
@@ -39,7 +77,11 @@ const LoginScreen = () => {
           placeholder="Mot de passe"
           placeholderTextColor="#fff"
           secureTextEntry={!showPassword}
-        />
+          onChangeText={(text) =>
+            setFormData({ ...formData, password: text })
+          }
+          value={formData.password} />
+      
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
           style={styles.icon_input_eye}
@@ -69,9 +111,9 @@ const LoginScreen = () => {
       
       <View>
       <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("RegisterScreen")}
-      >
+          style={styles.button}
+          onPress={handleLogin}
+        >
         <Text style={styles.buttonText}>Se connecter</Text>
       </TouchableOpacity>
       </View>
