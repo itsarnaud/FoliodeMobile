@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import {
@@ -16,10 +17,42 @@ import {
   Eye,
   LockKeyhole,
 } from "lucide-react-native";
+import { registerUser } from "../services/Api_POST";
 
 const RegisterScreen = () => {
   const navigation = useNavigation<NavigationProp<any>>();
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+  });
+
+  const handleRegister = async () => {
+    if (
+      !formData.firstname ||
+      !formData.lastname ||
+      !formData.email ||
+      !formData.password
+    ) {
+      Alert.alert("Veuillez remplir tous les champs.");
+      return;
+    }
+    try {
+      const response = await registerUser(formData);
+      navigation.navigate("LoginScreen");
+    } catch (error: any) {
+      if (error.response && error.response.status === 400) {
+        Alert.alert("Erreur de connexion", error.response.data.error);
+      } else {
+        Alert.alert(
+          "Erreur de connexion",
+          "Impossible de se connecter. Veuillez vérifier votre connexion internet."
+        );
+      }
+    }
+  };
 
   return (
     <ScrollView style={styles.page}>
@@ -40,6 +73,10 @@ const RegisterScreen = () => {
               style={[styles.input, styles.half_input]}
               placeholder="Nom"
               placeholderTextColor="#fff"
+              onChangeText={(text) =>
+                setFormData({ ...formData, lastname: text })
+              }
+              value={formData.lastname}
             />
           </View>
         </View>
@@ -50,6 +87,10 @@ const RegisterScreen = () => {
               style={[styles.input, styles.half_input]}
               placeholder="Prénom"
               placeholderTextColor="#fff"
+              onChangeText={(text) =>
+                setFormData({ ...formData, firstname: text })
+              }
+              value={formData.firstname}
             />
           </View>
         </View>
@@ -62,6 +103,8 @@ const RegisterScreen = () => {
           style={styles.input}
           placeholder="Email"
           placeholderTextColor="#fff"
+          onChangeText={(text) => setFormData({ ...formData, email: text })}
+          value={formData.email}
         />
       </View>
       <Text style={styles.text_input}>Mot de passe</Text>
@@ -72,6 +115,8 @@ const RegisterScreen = () => {
           placeholder="Mot de passe"
           placeholderTextColor="#fff"
           secureTextEntry={!showPassword}
+          onChangeText={(text) => setFormData({ ...formData, password: text })}
+          value={formData.password}
         />
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
@@ -100,25 +145,21 @@ const RegisterScreen = () => {
         </Text>
       </Text>
       <View style={styles.containerSubmit}>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("RegisterScreen")}
-      >
-        <Text style={styles.buttonText}>S'inscrire</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>S'inscrire</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  containerInput:{
+  containerInput: {
     flex: 1,
   },
   page: {
     backgroundColor: "#000",
-     paddingHorizontal: 15,
+    paddingHorizontal: 15,
   },
   arrow: {
     marginLeft: 2,
@@ -205,7 +246,6 @@ const styles = StyleSheet.create({
     // marginBottom: 15,
     display: "flex",
     marginTop: 40,
-
   },
   buttonText: {
     color: "#fff",
@@ -216,7 +256,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#fff",
     textAlign: "center",
-    
   },
   container_line: {
     flexDirection: "row",
@@ -234,7 +273,6 @@ const styles = StyleSheet.create({
     color: "#3E3F92",
     fontWeight: "bold",
   },
-  containerSubmit: {
-    }
+  containerSubmit: {},
 });
 export default RegisterScreen;
