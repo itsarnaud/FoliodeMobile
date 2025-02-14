@@ -14,3 +14,17 @@ export const loginUser = async (userData: {
       throw error;
     }
   };
+
+export const registerUser = async (userData: {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+}) => {
+  try {
+    const response = await axios.post(`${IP_API}/api/user/signup`, userData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
