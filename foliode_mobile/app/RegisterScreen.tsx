@@ -30,16 +30,30 @@ const RegisterScreen = () => {
   });
 
   const handleRegister = async () => {
+    if (
+      !formData.firstname ||
+      !formData.lastname ||
+      !formData.email ||
+      !formData.password
+    ) {
+      Alert.alert("Veuillez remplir tous les champs.");
+      return;
+    }
     try {
       const response = await registerUser(formData);
       navigation.navigate("LoginScreen");
-    } catch (error) {
-      Alert.alert(
-        "Erreur d'inscription",
-        "Impossible de créer votre compte. Veuillez vérifier votre connexion internet."
-      );
+    } catch (error: any) {
+      if (error.response && error.response.status === 400) {
+        Alert.alert("Erreur de connexion", error.response.data.error);
+      } else {
+        Alert.alert(
+          "Erreur de connexion",
+          "Impossible de se connecter. Veuillez vérifier votre connexion internet."
+        );
+      }
     }
   };
+
   return (
     <ScrollView style={styles.page}>
       <View style={styles.header}></View>
@@ -89,9 +103,7 @@ const RegisterScreen = () => {
           style={styles.input}
           placeholder="Email"
           placeholderTextColor="#fff"
-          onChangeText={(text) =>
-            setFormData({ ...formData, email: text })
-          }
+          onChangeText={(text) => setFormData({ ...formData, email: text })}
           value={formData.email}
         />
       </View>
@@ -103,9 +115,7 @@ const RegisterScreen = () => {
           placeholder="Mot de passe"
           placeholderTextColor="#fff"
           secureTextEntry={!showPassword}
-          onChangeText={(text) =>
-            setFormData({ ...formData, password: text })
-          }
+          onChangeText={(text) => setFormData({ ...formData, password: text })}
           value={formData.password}
         />
         <TouchableOpacity

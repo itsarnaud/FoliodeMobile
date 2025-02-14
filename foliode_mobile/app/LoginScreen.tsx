@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { Mail, ArrowLeft, LockKeyhole, Eye, EyeOff } from "lucide-react-native";
-import { loginUser} from "@/services/Api_POST";
+import { loginUser } from "@/services/Api_POST";
 
 const LoginScreen = () => {
   const navigation = useNavigation<NavigationProp<any>>();
@@ -23,21 +23,16 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
-      Alert.alert(
-        "Veuillez remplir tous les champs.",
-      );
+      Alert.alert("Veuillez remplir tous les champs.");
       return;
     }
-  
+
     try {
       const response = await loginUser(formData);
-      navigation.navigate('(tabs)', { screen: 'LoginScreen' });
+      navigation.navigate("(tabs)", { screen: "LoginScreen" });
     } catch (error: any) {
       if (error.response && error.response.status === 400) {
-        Alert.alert(
-          "Erreur de connexion",
-          error.response.data.error
-        );
+        Alert.alert("Erreur de connexion", error.response.data.error);
       } else {
         Alert.alert(
           "Erreur de connexion",
@@ -46,7 +41,7 @@ const LoginScreen = () => {
       }
     }
   };
-  
+
   return (
     <ScrollView style={styles.page}>
       <View style={styles.header}></View>
@@ -64,10 +59,9 @@ const LoginScreen = () => {
           style={styles.input}
           placeholder="Email"
           placeholderTextColor="#fff"
-          onChangeText={(text) =>
-            setFormData({ ...formData, email: text })
-          }
-          value={formData.email} />
+          onChangeText={(text) => setFormData({ ...formData, email: text })}
+          value={formData.email}
+        />
       </View>
       <Text style={styles.text_input}>Mot de passe</Text>
       <View style={styles.container_input}>
@@ -77,11 +71,10 @@ const LoginScreen = () => {
           placeholder="Mot de passe"
           placeholderTextColor="#fff"
           secureTextEntry={!showPassword}
-          onChangeText={(text) =>
-            setFormData({ ...formData, password: text })
-          }
-          value={formData.password} />
-      
+          onChangeText={(text) => setFormData({ ...formData, password: text })}
+          value={formData.password}
+        />
+
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
           style={styles.icon_input_eye}
@@ -108,14 +101,11 @@ const LoginScreen = () => {
           Créé en un !
         </Text>
       </Text>
-      
+
       <View>
-      <TouchableOpacity
-          style={styles.button}
-          onPress={handleLogin}
-        >
-        <Text style={styles.buttonText}>Se connecter</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Se connecter</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -124,7 +114,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#000",
-     paddingHorizontal: 15,
+    paddingHorizontal: 15,
   },
   arrow: {
     marginLeft: 2,
@@ -192,7 +182,7 @@ const styles = StyleSheet.create({
     paddingRight: 45,
   },
   button: {
-    width: '100%',
+    width: "100%",
     height: 54,
     backgroundColor: "#3E3F92",
     borderRadius: 1000,
@@ -200,7 +190,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 10,
     display: "flex",
-    marginTop:40,
+    marginTop: 40,
   },
   buttonText: {
     color: "#fff",
@@ -229,7 +219,6 @@ const styles = StyleSheet.create({
     color: "#3E3F92",
     fontWeight: "bold",
   },
-
 });
 
 export default LoginScreen;
