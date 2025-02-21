@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
+import { useAuth } from "./context/AuthContext";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -11,34 +12,19 @@ import {
 } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { Mail, ArrowLeft, LockKeyhole, Eye, EyeOff } from "lucide-react-native";
-import { loginUser } from "@/services/Api_POST";
+
+
 
 const LoginScreen = () => {
+    const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { onLogin} = useAuth();
   const navigation = useNavigation<NavigationProp<any>>();
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
 
-  const handleLogin = async () => {
-    if (!formData.email || !formData.password) {
-      Alert.alert("Veuillez remplir tous les champs.");
-      return;
-    }
-
-    try {
-      const response = await loginUser(formData);
-      navigation.navigate("(tabs)", { screen: "LoginScreen" });
-    } catch (error: any) {
-      if (error.response && error.response.status === 400) {
-        Alert.alert("Erreur de connexion", error.response.data.error);
-      } else {
-        Alert.alert(
-          "Erreur de connexion",
-          "Impossible de se connecter. Veuillez vérifier votre connexion internet."
-        );
-      }
+  const login = async () => {
+    const result = await onLogin!(email, password);
+    if (result && result.error) {
+      alert(result.msg);
     }
   };
 
@@ -55,55 +41,22 @@ const LoginScreen = () => {
       <Text style={styles.text_input}>Email</Text>
       <View style={styles.container_input}>
         <Mail style={styles.icon_input} color="#fff" size={22} />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#fff"
-          onChangeText={(text) => setFormData({ ...formData, email: text })}
-          value={formData.email}
-        />
+        <TextInput style={styles.input} placeholder="email" onChangeText={(text: string) => setEmail(text)} value={email}></TextInput>
       </View>
       <Text style={styles.text_input}>Mot de passe</Text>
       <View style={styles.container_input}>
         <LockKeyhole style={styles.icon_input} color="#fff" size={22} />
-        <TextInput
-          style={styles.input}
-          placeholder="Mot de passe"
-          placeholderTextColor="#fff"
-          secureTextEntry={!showPassword}
-          onChangeText={(text) => setFormData({ ...formData, password: text })}
-          value={formData.password}
-        />
-
-        <TouchableOpacity
-          onPress={() => setShowPassword(!showPassword)}
-          style={styles.icon_input_eye}
-        >
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            {showPassword ? (
-              <EyeOff style={styles.icon_input} color="#fff" size={22} />
-            ) : (
-              <Eye style={styles.icon_input} color="#fff" size={22} />
-            )}
-          </TouchableOpacity>
-        </TouchableOpacity>
+       <TextInput style={styles.input} placeholder="password" secureTextEntry={true} onChangeText={(text: string) => setPassword(text)} value={password}></TextInput>
+       
       </View>
       <Text style={styles.text_mdp_forgot}>Mot de passe oublié ?</Text>
       <View style={styles.container_line}>
         <View style={styles.line} />
       </View>
-      <Text style={styles.footerText}>
-        Vous n'avez pas de compte ?{" "}
-        <Text
-          style={styles.link}
-          onPress={() => navigation.navigate("RegisterScreen")}
-        >
-          Créé en un !
-        </Text>
-      </Text>
+     
 
       <View>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={login}>
           <Text style={styles.buttonText}>Se connecter</Text>
         </TouchableOpacity>
       </View>

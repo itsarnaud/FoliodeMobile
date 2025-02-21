@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "foliode_mobile",
-    "slug": "foliode_mobile",
+    "name": "FoliodeMobile",
+    "slug": "FoliodeMobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/foliode-logo.png",
@@ -9,17 +9,12 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSAppTransportSecurity": { 
-          "NSAllowsArbitraryLoads": true 
-        }
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/foliode-logo-text.png",
-        "backgroundColor": "#ffffff",
-        "usesCleartextTraffic": true
+        "backgroundColor": "#ffffff"
       }
     },
     "web": {
@@ -43,4 +38,4 @@
       "typedRoutes": true
     }
   }
-}}
+}
