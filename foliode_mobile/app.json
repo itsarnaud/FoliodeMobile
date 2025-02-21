@@ -9,12 +9,17 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSAppTransportSecurity": { 
+          "NSAllowsArbitraryLoads": true 
+        }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/foliode-logo-text.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "usesCleartextTraffic": true
       }
     },
     "web": {
@@ -38,4 +43,4 @@
       "typedRoutes": true
     }
   }
-}
+}}
