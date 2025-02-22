@@ -1,18 +1,28 @@
 import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Text } from "react-native";
 import { globalStyles } from "../styles/styles";
 
 import { Card } from "@/app/components/ui/Card";
 import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
 import { ProjectCard } from "@/app/components/ui/ProjectCardItem";
+import { useUserData } from "@/app/utils/tokenData";
+
 const Dashboard = () => {
+  const userData = useUserData();
+
+  if (!userData) {
+    return null;
+  }
   return (
     <>
       <HeaderLogo />
        <ScrollView style={globalStyles.containerPage}>
+       <View>
+           
+        </View>
           <HeaderTitle
-          title="Bonjour, Timothé"
+          title={`Bonjour, ${userData.firstname}`}
           description="Vous pouvez voir votre portfolio ici : "
         />
           <View style={styles.cardRow}>
