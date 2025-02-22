@@ -1,11 +1,6 @@
 import { StyleSheet } from "react-native";
 
 export const globalStyles = StyleSheet.create({
-  container: {
-    backgroundColor: "#000000",
-    paddingHorizontal: 15,
-    marginBottom: 80,
-  },
   formContainer: {
     gap: 14,
     marginBottom: 24,
@@ -36,5 +31,10 @@ export const globalStyles = StyleSheet.create({
     color: "#FFFFFF",
     paddingHorizontal: 18,
     paddingVertical: 11,
+  },
+  containerPage: {
+    flex: 1,
+    backgroundColor: "#000",
+    paddingHorizontal: 15,
   },
 });

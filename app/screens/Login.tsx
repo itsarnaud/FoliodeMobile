@@ -10,12 +10,19 @@ import {
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
-import { Mail, ArrowLeft, LockKeyhole, Eye, EyeOff, Link } from "lucide-react-native";
+import {
+  Mail,
+  ArrowLeft,
+  LockKeyhole,
+  Eye,
+  EyeOff,
+  Link,
+} from "lucide-react-native";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { onLogin, onRegister } = useAuth();
+  const { onLogin } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const login = async () => {
@@ -25,16 +32,12 @@ const Login = () => {
     }
   };
 
-  const register = async () => {
-    const result = await onRegister!(email, password);
-    if (result && result.error) {
-      alert(result.msg);
-    } else {
-      login();
-    }
-  };
   return (
     <ScrollView style={styles.page}>
+      <Text style={styles.title}>Bon Retour !</Text>
+      <Text style={styles.under_title}>
+        Entrez votre email et votre mot de passe pour vous connecter
+      </Text>
       <View>
         <Text style={styles.text_input}>Email</Text>
         <View style={styles.container_input}>
@@ -55,21 +58,19 @@ const Login = () => {
             style={styles.input}
             placeholder="password"
             placeholderTextColor="#fff"
-            secureTextEntry={true}
+            secureTextEntry={!showPassword}
             onChangeText={(text: string) => setPassword(text)}
             value={password}
-          ></TextInput>
+          />
           <TouchableOpacity
             onPress={() => setShowPassword(!showPassword)}
             style={styles.icon_input_eye}
           >
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              {showPassword ? (
-                <EyeOff style={styles.icon_input} color="#fff" size={22} />
-              ) : (
-                <Eye style={styles.icon_input} color="#fff" size={22} />
-              )}
-            </TouchableOpacity>
+            {showPassword ? (
+              <EyeOff style={styles.icon_input} color="#fff" size={22} />
+            ) : (
+              <Eye style={styles.icon_input} color="#fff" size={22} />
+            )}
           </TouchableOpacity>
         </View>
         <Text style={styles.text_mdp_forgot}>Mot de passe oublié ?</Text>
@@ -77,8 +78,7 @@ const Login = () => {
           <View style={styles.line} />
         </View>
         <Text style={styles.footerText}>
-          Vous n'avez pas de compte ?{" "}
-          {/* <Link href="" color="#3E3F92" /> */}
+          Vous n'avez pas de compte ? {/* <Link href="" color="#3E3F92" /> */}
         </Text>
         <TouchableOpacity style={styles.button} onPress={login}>
           <Text style={styles.buttonText}>Se connecter</Text>
@@ -109,7 +109,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    marginTop: 41,
     fontWeight: "bold",
     color: "#fff",
   },
@@ -179,7 +178,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#fff",
     textAlign: "center",
-    marginBottom: 150,
   },
   container_line: {
     flexDirection: "row",

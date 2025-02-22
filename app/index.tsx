@@ -20,7 +20,7 @@ export default function Index() {
           <View style={styles.line} />
         </View>
       <View style={styles.button_container}>
-        <Link href="/signup" style={styles.button}>
+        <Link href="/screens/Register" style={styles.button}>
           <Text style={styles.button_text}>S'inscrire</Text>
         </Link>
         <Link href="/screens/login" style={[styles.button,styles.button_singin]}>

@@ -1,16 +1,22 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import { useRouter } from "expo-router";
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
-  onRegister?: (email: string, password: string) => Promise<any>;
+  onRegister?: (
+    email: string,
+    password: string,
+    lastname: string,
+    firstname: string
+  ) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
 }
 
 const TOKEN_KEY = "my jwt";
-export const API_URL = "http://192.168.1.1:8080";
+// export const API_URL = "http://192.168.1.22:8080";
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
@@ -18,6 +24,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: any) => {
+  const router = useRouter();
   const [authState, setAuthState] = useState<{
     token: string | null;
     authenticated: boolean | null;
@@ -41,9 +48,33 @@ export const AuthProvider = ({ children }: any) => {
     loadToken();
   }, []);
 
-  const register = async (email: string, password: string) => {
+  const register = async (
+    email: string,
+    password: string,
+    lastname: string,
+    firstname: string
+  ) => {
     try {
-      return await axios.post(`${API_URL}/api/user/signup`, { email, password });
+      const result = await axios.post(
+        `${process.env.EXPO_PUBLIC_IP_API}/api/user/signup`,
+        {
+          email,
+          password,
+          lastname,
+          firstname,
+        }
+      );
+
+      setAuthState({
+        token: result.data.token,
+        authenticated: true,
+      });
+      router.push("(tabs)/Dashboard");
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${result.data.token}`;
+      await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
+      return result;
     } catch (e) {
       return { error: true, msg: (e as any).response.data.msg };
     }
@@ -51,13 +82,15 @@ export const AuthProvider = ({ children }: any) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const result = await axios.post(`${API_URL}/api/user/signin`, { email, password });
-      console.log("authcontext.tsx", result);
+      const result = await axios.post(
+        `${process.env.EXPO_PUBLIC_IP_API}/api/user/signin`,
+        { email, password }
+      );
       setAuthState({
         token: result.data.token,
         authenticated: true,
       });
-
+      router.push("(tabs)/Dashboard");
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${result.data.token}`;
@@ -84,9 +117,5 @@ export const AuthProvider = ({ children }: any) => {
     authState,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
