@@ -1,24 +1,54 @@
 import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { globalStyles } from "@/app/styles/styles";
-
-import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
-import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
 import { Input } from "@/app/components/ui/Input";
 import { TextArea } from "@/app/components/ui/TextArea";
 
-const StepOne = () => {
+interface StepOneProps {
+  username: string;
+  setUsername: (value: string) => void;
+  userTitle: string;
+  setUserTitle: (value: string) => void;
+  subtitle: string;
+  setSubtitle: (value: string) => void;
+  presentation: string;
+  setPresentation: (value: string) => void;
+}
+
+const StepOne = ({
+  username,
+  setUsername,
+  userTitle,
+  setUserTitle,
+  subtitle,
+  setSubtitle,
+  presentation,
+  setPresentation,
+}: StepOneProps) => {
   return (
-    <>
-      <ScrollView>
-        <View style={styles.formContainer}>
-          <Input label="Nom d’utilisateur" />
-          <Input label="Titre de l’utilisateur" />
-          <Input label="Sous titre" />
-          <TextArea label="Présentation" />
-        </View>
-      </ScrollView>
-    </>
+    <ScrollView>
+      <View style={styles.formContainer}>
+        <Input
+          label="Nom d’utilisateur"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <Input
+          label="Titre de l’utilisateur"
+          value={userTitle}
+          onChangeText={setUserTitle}
+        />
+        <Input
+          label="Sous titre"
+          value={subtitle}
+          onChangeText={setSubtitle}
+        />
+        <TextArea
+          label="Présentation"
+          value={presentation}
+          onChangeText={setPresentation}
+        />
+      </View>
+    </ScrollView>
   );
 };
 

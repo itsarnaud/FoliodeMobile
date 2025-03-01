@@ -5,10 +5,8 @@ interface InputProps extends TextInputProps {
   label: string;
 }
 
-export function Input({ style, label, ...props }: InputProps) {
+export function Input({ style, label, value, onChangeText, ...props }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
-  const [value, setValue] = useState("");
-
   const animatedLabel = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -26,11 +24,11 @@ export function Input({ style, label, ...props }: InputProps) {
     }),
     fontSize: animatedLabel.interpolate({
       inputRange: [0, 1],
-      outputRange: [16, 13], 
+      outputRange: [16, 13],
     }),
     color: animatedLabel.interpolate({
       inputRange: [0, 1],
-      outputRange: ["#777", "#FFF"], 
+      outputRange: ["#777", "#FFF"],
     }),
   };
 
@@ -42,10 +40,10 @@ export function Input({ style, label, ...props }: InputProps) {
       <TextInput
         {...props}
         value={value}
-        onChangeText={setValue}
+        onChangeText={onChangeText}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        style={[styles.input, isFocused || value ? styles.inputFocused : null]}
+        style={[styles.input, isFocused || value ? styles.inputFocused : null, style]}
       />
     </View>
   );

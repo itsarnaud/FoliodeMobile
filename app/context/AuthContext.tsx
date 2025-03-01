@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: any) => {
         token: result.data.token,
         authenticated: true,
       });
-      router.push("(tabs)/Dashboard");
+      router.push("screens/MultiStepForm");
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${result.data.token}`;
@@ -89,7 +89,8 @@ export const AuthProvider = ({ children }: any) => {
         token: result.data.token,
         authenticated: true,
       });
-      router.push("(tabs)/Dashboard");
+      // router.push("(tabs)/Dashboard");
+      router.push("screens/MultiStepForm");
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${result.data.token}`;

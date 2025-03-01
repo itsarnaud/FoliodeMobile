@@ -8,14 +8,12 @@ import {
   TextInputProps,
 } from "react-native";
 
-interface InputProps extends TextInputProps {
+interface TextAreaProps extends TextInputProps {
   label: string;
 }
 
-export function TextArea({ style, label, ...props }: InputProps) {
+export function TextArea({ style, label, value, onChangeText, ...props }: TextAreaProps) {
   const [isFocused, setIsFocused] = useState(false);
-  const [value, setValue] = useState("");
-
   const animatedLabel = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -47,7 +45,7 @@ export function TextArea({ style, label, ...props }: InputProps) {
       <TextInput
         {...props}
         value={value}
-        onChangeText={setValue}
+        onChangeText={onChangeText}
         multiline={true}
         numberOfLines={4}
         onFocus={() => setIsFocused(true)}
