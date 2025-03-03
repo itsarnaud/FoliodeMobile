@@ -1,42 +1,61 @@
-import React, { useState } from "react";
-import { StyleSheet, ScrollView, Platform } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, ScrollView, Platform, View } from "react-native";
 import { globalStyles } from "@/app/styles/styles";
 
 import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
 import { TemplateCard } from "@/app/components/ui/Template/SelectTemplate";
 import { PresetCard } from "@/app/components/ui/Template/SelectPreset";
+import { templates, Template } from "@/app/interface/Template";
+interface StepFourProps {
+  onTemplateSelect: (template: Template) => void;
+  onColorSelect: (colors: Template["color"]) => void;
+}
 
-const StepTow = () => {
-  const handleSelectImage = () => {
-    Platform.OS === "web";
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = () => {};
-    input.click();
-  };
+const StepFour = ({ onTemplateSelect, onColorSelect }: StepFourProps) => {
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 
-  const [isCheckedTemplate, setIsCheckedTemplate] = useState(false);
-  const [isCheckedPreset, setIsCheckedPreset] = useState(false);
+  useEffect(() => {
+    if (selectedTemplate) {
+      const template = templates.find((t) => t.id === selectedTemplate);
+      if (template) {
+        onTemplateSelect(template);
+        if (!selectedPreset) {
+          onColorSelect(template.color);
+        }
+      }
+    }
+  }, [selectedTemplate]);
+
+  useEffect(() => {
+    if (selectedPreset) {
+      const preset = templates.find((t) => t.id === selectedPreset);
+      if (preset) {
+        onColorSelect(preset.color);
+      }
+    }
+  }, [selectedPreset]);
 
   return (
-    <>
-      <ScrollView>
+    <ScrollView>
+      <View style={styles.formContainer}>
         <TemplateCard
           title="Les templates"
-          isChecked={isCheckedTemplate}
-          onToggle={() => setIsCheckedTemplate(!isCheckedTemplate)}
-          imageUri="https://picsum.photos/500/300?random=1"
+          selectedTemplate={selectedTemplate}
+          onTemplateSelect={setSelectedTemplate}
+          templates={templates}
         />
 
         <PresetCard
           title="Preset de couleur"
-          isChecked={isCheckedPreset}
-          onToggle={() => setIsCheckedPreset(!isCheckedPreset)}
+          selectedTemplate={templates.find((t) => t.id === selectedTemplate) || null}
+          templates={templates}
+          selectedPreset={selectedPreset}
+          onPresetSelect={setSelectedPreset}
         />
-      </ScrollView>
-    </>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -47,4 +66,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StepTow;
+export default StepFour;

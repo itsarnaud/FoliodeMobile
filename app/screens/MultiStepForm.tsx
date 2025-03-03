@@ -9,6 +9,7 @@ import StepThree from "@/app/components/MultiStepForm/StepThree";
 import StepFour from "@/app/components/MultiStepForm/StepFour";
 import { ButtonFull } from "@/app/components/ui/ButtonFull";
 import { createPortfolio } from "@/app/utils/api.service";
+import { Template, templates } from "@/app/interface/Template";
 
 const MultiStepForm = () => {
   const [step, setStep] = useState(1);
@@ -17,6 +18,9 @@ const MultiStepForm = () => {
   const [userTitle, setUserTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [presentation, setPresentation] = useState("");
+
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [selectedColors, setSelectedColors] = useState<Template["color"] | null>(null);
 
   const nextStep = () => {
     if (step < 4) {
@@ -31,20 +35,17 @@ const MultiStepForm = () => {
   };
 
   const handleSubmit = async () => {
+    const defaultTemplate = templates[0];
     const payload = {
       title: userTitle,
       subtitle: subtitle,
       bio: presentation,
       url: `exemple-${Date.now()}`,
       config: {
-        colors: {
-          primary: "",
-          secondary: "",
-          background: "",
-        },
+        colors: selectedColors || defaultTemplate.color,
         font: "",
       },
-      template: "",
+      template: selectedTemplate?.id || defaultTemplate.id,
     };
 
     try {
@@ -73,7 +74,12 @@ const MultiStepForm = () => {
     },
     { id: 2, component: <StepTwo /> },
     { id: 3, component: <StepThree /> },
-    { id: 4, component: <StepFour /> },
+    { id: 4, component: (
+      <StepFour
+        onTemplateSelect={setSelectedTemplate}
+        onColorSelect={setSelectedColors}
+      />
+    ), },
   ];
 
   return (

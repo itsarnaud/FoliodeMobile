@@ -5,51 +5,66 @@ import { globalStyles } from "../../../styles/styles";
 
 interface TemplateCardProps {
   title: string;
-  isChecked: boolean;
-  imageUri: string;
-  onToggle: () => void;
+  selectedTemplate: string | null;
+  onTemplateSelect: (id: string) => void;
+  templates: Array<{
+    id: string;
+    name: string;
+    preview: any;
+  }>;
 }
 
-export function TemplateCard({ title, isChecked, onToggle, imageUri }: TemplateCardProps) {
+export function TemplateCard({
+  title,
+  selectedTemplate,
+  onTemplateSelect,
+  templates,
+}: TemplateCardProps) {
   return (
     <View style={[globalStyles.card, { marginBottom: 20 }]}>
       <Text style={styles.titreCard}>{title}</Text>
       <View style={styles.containerAllChecked}>
-        <Pressable onPress={onToggle}>
-          <View
-            style={[
-              styles.containerCheckedButton,
-              isChecked && styles.checkedContainerStyle,
-            ]}
+        {templates.map((template) => (
+          <Pressable
+            key={template.id}
+            onPress={() => onTemplateSelect(template.id)}
           >
-            <View>
-              <View style={styles.containerChecked}>
-              <Image
-                 source={{ uri: imageUri }}
-                  style={styles.imageStyle}
-                />
-                <View style={styles.containerVignette}>
-                  <BouncyCheckbox
-                    isChecked={isChecked}
-                    size={15}
-                    fillColor="#4E529E"
-                    disableText
-                    unFillColor="transparent"
-                    iconStyle={{
-                      borderColor: isChecked ? "white" : "transparent",
-                      borderWidth: isChecked ? 1 : 0,
-                    }}
-                    innerIconStyle={{ borderWidth: 0 }}
-                    onPress={onToggle}
-                  />
+            <View
+              style={[
+                styles.containerCheckedButton,
+                selectedTemplate === template.id &&
+                  styles.checkedContainerStyle,
+              ]}
+            >
+              <View>
+                <View style={styles.containerChecked}>
+                  <Image source={template.preview} style={styles.imageStyle} />
+                  <View style={styles.containerVignette}>
+                    <BouncyCheckbox
+                      isChecked={selectedTemplate === template.id}
+                      size={15}
+                      fillColor="#4E529E"
+                      disableText
+                      unFillColor="transparent"
+                      iconStyle={{
+                        borderColor:
+                          selectedTemplate === template.id
+                            ? "white"
+                            : "transparent",
+                        borderWidth: selectedTemplate === template.id ? 1 : 0,
+                      }}
+                      innerIconStyle={{ borderWidth: 0 }}
+                      onPress={() => onTemplateSelect(template.id)}
+                    />
+                  </View>
                 </View>
               </View>
+              <View>
+                <Text style={styles.textCheckbox}>{template.name}</Text>
+              </View>
             </View>
-            <View>
-              <Text style={styles.textCheckbox}>Prestige</Text>
-            </View>
-          </View>
-        </Pressable>
+          </Pressable>
+        ))}
       </View>
     </View>
   );
