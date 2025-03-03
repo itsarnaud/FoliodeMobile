@@ -3,13 +3,13 @@ import { TextInput, StyleSheet, Text, View, Animated, TextInputProps } from "rea
 
 interface InputProps extends TextInputProps {
   label: string;
+  defaultValue?: string;
 }
 
-export function Input({ style, label, ...props }: InputProps) {
+export function Input({ style, label, defaultValue = "", ...props }: InputProps) {
+  const [value, setValue] = useState(defaultValue);
   const [isFocused, setIsFocused] = useState(false);
-  const [value, setValue] = useState("");
-
-  const animatedLabel = useRef(new Animated.Value(0)).current;
+  const animatedLabel = useRef(new Animated.Value(defaultValue ? 1 : 0)).current;
 
   useEffect(() => {
     Animated.timing(animatedLabel, {
@@ -26,11 +26,11 @@ export function Input({ style, label, ...props }: InputProps) {
     }),
     fontSize: animatedLabel.interpolate({
       inputRange: [0, 1],
-      outputRange: [16, 13], 
+      outputRange: [16, 13],
     }),
     color: animatedLabel.interpolate({
       inputRange: [0, 1],
-      outputRange: ["#777", "#FFF"], 
+      outputRange: ["#777", "#FFF"],
     }),
   };
 
@@ -45,7 +45,7 @@ export function Input({ style, label, ...props }: InputProps) {
         onChangeText={setValue}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        style={[styles.input, isFocused || value ? styles.inputFocused : null]}
+        style={[styles.input, isFocused || value ? styles.inputFocused : null, style]}
       />
     </View>
   );
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     zIndex: 1,
     color: "#A1A1A3",
-    fontWeight: 400,
+    fontWeight: "400",
   },
   input: {
     backgroundColor: "#141414",
@@ -76,4 +76,3 @@ const styles = StyleSheet.create({
     paddingBottom: 17,
   },
 });
-

@@ -52,7 +52,7 @@ export default function Layout() {
               <Stack.Screen name="(tabs)/Dashboard" />
             ) : (
               <Stack.Screen
-                name="screens/login"
+                name="screens/Login"
                 options={{
                   headerShown: true,
                   headerStyle: { backgroundColor: "#000" },
