@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: any) => {
   ) => {
     try {
       const result = await axios.post(
-        `http://192.168.137.141:8081/api/user/signup`,
+        `http://192.168.1.22:8080/api/user/signup`,
         {
           email,
           password,
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }: any) => {
   const login = async (email: string, password: string) => {
     try {
       const result = await axios.post(
-        `http://192.168.137.141:8081/api/user/signin`,
+        `http://192.168.1.22:8080/api/user/signin`,
         { email, password }
       );
       setAuthState({

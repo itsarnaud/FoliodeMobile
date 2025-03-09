@@ -23,7 +23,7 @@ export default function Index() {
         <Link href="/screens/Register" style={styles.button}>
           <Text style={styles.button_text}>S'inscrire</Text>
         </Link>
-        <Link href="/screens/Login" style={[styles.button,styles.button_singin]}>
+        <Link href="/screens/login" style={[styles.button,styles.button_singin]}>
           <Text style={styles.button_text}>Se connecter</Text>
         </Link>
       </View>
