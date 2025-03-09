@@ -8,17 +8,30 @@ import StepTwo from "@/app/components/MultiStepForm/StepTwo";
 import StepThree from "@/app/components/MultiStepForm/StepThree";
 import StepFour from "@/app/components/MultiStepForm/StepFour";
 import { ButtonFull } from "@/app/components/ui/ButtonFull";
-import { createPortfolio } from "@/app/utils/api.service";
+import { createPortfolio, createProject, createSkills } from "@/app/utils/api.service";
 import { Template, templates } from "@/app/interface/Template";
 
 const MultiStepForm = () => {
   const [step, setStep] = useState(1);
 
+  // États step 1
   const [username, setUsername] = useState("");
   const [userTitle, setUserTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [presentation, setPresentation] = useState("");
 
+  // États step 2 - Compétence
+  const [skillName, setSkillName] = useState("");
+  const [skillImage, setSkillImage] = useState<string | null>(null);
+
+  // États step 3 - Projet
+  const [projectTitle, setProjectTitle] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [projectLinkName, setProjectLinkName] = useState("");
+  const [projectLinkUrl, setProjectLinkUrl] = useState("");
+  const [projectImage, setProjectImage] = useState<string | null>(null);
+
+  // États step 4
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [selectedColors, setSelectedColors] = useState<Template["color"] | null>(null);
 
@@ -36,7 +49,7 @@ const MultiStepForm = () => {
 
   const handleSubmit = async () => {
     const defaultTemplate = templates[0];
-    const payload = {
+    const portfolioPayload = {
       title: userTitle,
       subtitle: subtitle,
       bio: presentation,
@@ -49,10 +62,32 @@ const MultiStepForm = () => {
     };
 
     try {
-      const data = await createPortfolio(payload);
-      console.log("Réponse de l'API :", data);
+      // Envoi du portfolio
+      await createPortfolio(portfolioPayload);
+
+      // Envoi de la compétence si renseignée
+      if (skillName.trim() !== "") {
+        await createSkills({ name: skillName }, skillImage);
+      }
+
+      // Préparation du lien pour le projet
+      const links = [];
+      if (projectLinkName && projectLinkUrl) {
+        links.push({
+          name: projectLinkName,
+          url: projectLinkUrl,
+        });
+      }
+
+      // Envoi du projet
+      await createProject(
+        { title: projectTitle, description: projectDescription, links },
+        projectImage
+      );
+
+      console.log("Portfolio, compétence et projet envoyés avec succès.");
     } catch (error) {
-      console.error("Erreur lors de l'envoi :", error);
+      console.error("Erreur lors de l'envoi finale :", error);
     }
   };
 
@@ -72,14 +107,43 @@ const MultiStepForm = () => {
         />
       ),
     },
-    { id: 2, component: <StepTwo /> },
-    { id: 3, component: <StepThree /> },
-    { id: 4, component: (
-      <StepFour
-        onTemplateSelect={setSelectedTemplate}
-        onColorSelect={setSelectedColors}
-      />
-    ), },
+    {
+      id: 2,
+      component: (
+        <StepTwo 
+          skillName={skillName}
+          setSkillName={setSkillName}
+          skillImage={skillImage}
+          setSkillImage={setSkillImage}
+        />
+      ),
+    },
+    {
+      id: 3,
+      component: (
+        <StepThree 
+          title={projectTitle} 
+          setTitle={setProjectTitle}
+          description={projectDescription}
+          setDescription={setProjectDescription}
+          linkName={projectLinkName}
+          setLinkName={setProjectLinkName}
+          linkUrl={projectLinkUrl}
+          setLinkUrl={setProjectLinkUrl}
+          projectImage={projectImage}
+          setProjectImage={setProjectImage}
+        />
+      ),
+    },
+    {
+      id: 4,
+      component: (
+        <StepFour
+          onTemplateSelect={setSelectedTemplate}
+          onColorSelect={setSelectedColors}
+        />
+      ),
+    },
   ];
 
   return (
@@ -91,43 +155,19 @@ const MultiStepForm = () => {
           description="Vous pouvez ajouter vos projets ici"
         />
         <View style={styles.containerProgress}>
-          {/* Indicateur de progression */}
-          <View
-            style={[styles.number, step >= 1 ? styles.active : styles.inactive]}
-          >
+          <View style={[styles.number, step >= 1 ? styles.active : styles.inactive]}>
             <Text style={styles.text}>1</Text>
           </View>
-          <View
-            style={[
-              styles.trait,
-              step >= 2 ? styles.activeTrait : styles.inactiveTrait,
-            ]}
-          />
-          <View
-            style={[styles.number, step >= 2 ? styles.active : styles.inactive]}
-          >
+          <View style={[styles.trait, step >= 2 ? styles.activeTrait : styles.inactiveTrait]} />
+          <View style={[styles.number, step >= 2 ? styles.active : styles.inactive]}>
             <Text style={styles.text}>2</Text>
           </View>
-          <View
-            style={[
-              styles.trait,
-              step >= 3 ? styles.activeTrait : styles.inactiveTrait,
-            ]}
-          />
-          <View
-            style={[styles.number, step >= 3 ? styles.active : styles.inactive]}
-          >
+          <View style={[styles.trait, step >= 3 ? styles.activeTrait : styles.inactiveTrait]} />
+          <View style={[styles.number, step >= 3 ? styles.active : styles.inactive]}>
             <Text style={styles.text}>3</Text>
           </View>
-          <View
-            style={[
-              styles.trait,
-              step >= 4 ? styles.activeTrait : styles.inactiveTrait,
-            ]}
-          />
-          <View
-            style={[styles.number, step >= 4 ? styles.active : styles.inactive]}
-          >
+          <View style={[styles.trait, step >= 4 ? styles.activeTrait : styles.inactiveTrait]} />
+          <View style={[styles.number, step >= 4 ? styles.active : styles.inactive]}>
             <Text style={styles.text}>4</Text>
           </View>
         </View>
