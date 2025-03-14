@@ -10,7 +10,9 @@ import StepFour from "@/app/components/MultiStepForm/StepFour";
 import { ButtonFull } from "@/app/components/ui/ButtonFull";
 import { createPortfolio, createProject, createSkills } from "@/app/utils/api.service";
 import { Template, templates } from "@/app/interface/Template";
-
+import { Project } from "@/app/interface/project";
+import { Skill } from "@/app/interface/skill";
+import { useRouter } from "expo-router";
 const MultiStepForm = () => {
   const [step, setStep] = useState(1);
 
@@ -23,6 +25,7 @@ const MultiStepForm = () => {
   // États step 2 - Compétence
   const [skillName, setSkillName] = useState("");
   const [skillImage, setSkillImage] = useState<string | null>(null);
+  const [skills, setSkills] = useState<Skill[]>([]);
 
   // États step 3 - Projet
   const [projectTitle, setProjectTitle] = useState("");
@@ -30,6 +33,7 @@ const MultiStepForm = () => {
   const [projectLinkName, setProjectLinkName] = useState("");
   const [projectLinkUrl, setProjectLinkUrl] = useState("");
   const [projectImage, setProjectImage] = useState<string | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   // États step 4
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
@@ -47,30 +51,51 @@ const MultiStepForm = () => {
     }
   };
 
-  const handleSubmit = async () => {
-    const defaultTemplate = templates[0];
-    const portfolioPayload = {
-      title: userTitle,
-      subtitle: subtitle,
-      bio: presentation,
-      url: `exemple-${Date.now()}`,
-      config: {
-        colors: selectedColors || defaultTemplate.color,
-        font: "",
-      },
-      template: selectedTemplate?.id || defaultTemplate.id,
-    };
+  
+const handleSubmit = async () => {
+  const router = useRouter();
+  const defaultTemplate = templates[0];
+  const portfolioPayload = {
+    title: userTitle,
+    subtitle: subtitle,
+    bio: presentation,
+    url: `exemple-${Date.now()}`,
+    config: {
+      colors: selectedColors || defaultTemplate.color,
+      font: "",
+    },
+    template: selectedTemplate?.id || defaultTemplate.id,
+  };
 
-    try {
-      // Envoi du portfolio
-      await createPortfolio(portfolioPayload);
+  try {
+    // Envoi du portfolio
+    await createPortfolio(portfolioPayload);
 
-      // Envoi de la compétence si renseignée
-      if (skillName.trim() !== "") {
-        await createSkills({ name: skillName }, skillImage);
+    // Envoi des compétences déjà ajoutées
+    for (const skill of skills) {
+      await createSkills({ name: skill.name }, skill.image);
+    }
+    
+    if (skillName.trim() !== "") {
+      await createSkills({ name: skillName }, skillImage);
+    }
+
+    for (const project of projects) {
+      const links = [];
+      if (project.linkName && project.linkUrl) {
+        links.push({
+          name: project.linkName,
+          url: project.linkUrl,
+        });
       }
 
-      // Préparation du lien pour le projet
+      await createProject(
+        { title: project.title, description: project.description, links },
+        project.image
+      );
+    }
+
+    if (projectTitle.trim() !== "") {
       const links = [];
       if (projectLinkName && projectLinkUrl) {
         links.push({
@@ -79,17 +104,18 @@ const MultiStepForm = () => {
         });
       }
 
-      // Envoi du projet
       await createProject(
         { title: projectTitle, description: projectDescription, links },
         projectImage
       );
-
-      console.log("Portfolio, compétence et projet envoyés avec succès.");
-    } catch (error) {
-      console.error("Erreur lors de l'envoi finale :", error);
     }
-  };
+
+    console.log("Portfolio, compétences et projets envoyés avec succès.");
+    router.push("(tabs)/Dashboard");
+  } catch (error) {
+    console.error("Erreur lors de l'envoi finale :", error);
+  }
+};
 
   const steps = [
     {
@@ -115,6 +141,8 @@ const MultiStepForm = () => {
           setSkillName={setSkillName}
           skillImage={skillImage}
           setSkillImage={setSkillImage}
+          skills={skills}
+          setSkills={setSkills}
         />
       ),
     },
@@ -132,6 +160,8 @@ const MultiStepForm = () => {
           setLinkUrl={setProjectLinkUrl}
           projectImage={projectImage}
           setProjectImage={setProjectImage}
+          projects={projects}
+          setProjects={setProjects}
         />
       ),
     },

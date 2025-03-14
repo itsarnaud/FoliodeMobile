@@ -14,18 +14,31 @@ interface StepTwoProps {
   setSkillName: (value: string) => void;
   skillImage: string | null;
   setSkillImage: (value: string | null) => void;
+  skills?: Skill[];
+  setSkills?: (skills: Skill[]) => void;
 }
 
-const StepTwo = ({ skillName, setSkillName, skillImage, setSkillImage }: StepTwoProps) => {
-  // Ajouter l'état pour stocker les compétences
-  const [skills, setSkills] = useState<Skill[]>([]);
+const StepTwo = ({ 
+  skillName, 
+  setSkillName, 
+  skillImage, 
+  setSkillImage,
+  skills = [],
+  setSkills = () => {}
+}: StepTwoProps) => {
+  // État local pour les compétences, utilisé seulement si les props ne sont pas fournies
+  const [localSkills, setLocalSkills] = useState<Skill[]>([]);
+  
+  // Utiliser soit les props, soit l'état local
+  const skillsList = skills.length > 0 ? skills : localSkills;
+  const updateSkills = setSkills || setLocalSkills;
   
   const handleSelectImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.1,
     });
     if (!result.canceled) {
       setSkillImage(result.assets[0].uri);
@@ -41,7 +54,7 @@ const StepTwo = ({ skillName, setSkillName, skillImage, setSkillImage }: StepTwo
         image: skillImage,
       };
       
-      setSkills([...skills, newSkill]);
+      updateSkills([...skillsList, newSkill]);
       
       // Réinitialiser les champs
       setSkillName('');
@@ -51,13 +64,13 @@ const StepTwo = ({ skillName, setSkillName, skillImage, setSkillImage }: StepTwo
 
   // Ajouter la fonction pour supprimer une compétence
   const handleRemoveSkill = (id: string) => {
-    setSkills(skills.filter(skill => skill.id !== id));
+    updateSkills(skillsList.filter(skill => skill.id !== id));
   };
 
   return (
     <ScrollView>
       <View style={globalStyles.formContainer}>
-      {skills.map((skill) => (
+      {skillsList.map((skill) => (
         <InfoCard
           key={skill.id}
           id={skill.id}

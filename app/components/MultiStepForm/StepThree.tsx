@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, Image, Text } from "react-native";
 import { globalStyles } from "@/app/styles/styles";
 import * as ImagePicker from "expo-image-picker";
@@ -21,6 +21,9 @@ interface StepThreeProps {
   setLinkUrl: (value: string) => void;
   projectImage: string | null;
   setProjectImage: (value: string | null) => void;
+  // Ajout des propriétés pour gérer la liste des projets
+  projects?: Project[];
+  setProjects?: (projects: Project[]) => void;
 }
 
 const StepThree = ({
@@ -34,16 +37,22 @@ const StepThree = ({
   setLinkUrl,
   projectImage,
   setProjectImage,
+  projects = [],
+  setProjects = () => {},
 }: StepThreeProps) => {
-  // Ajouter l'état pour stocker les projets
-  const [projects, setProjects] = useState<Project[]>([]);
+  // Utiliser l'état local uniquement si les props projects/setProjects ne sont pas fournies
+  const [localProjects, setLocalProjects] = useState<Project[]>([]);
+  
+  // Utiliser soit les props, soit l'état local
+  const projectsList = projects.length > 0 ? projects : localProjects;
+  const updateProjects = setProjects || setLocalProjects;
 
   const handleSelectImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.1,
     });
     if (!result.canceled) {
       setProjectImage(result.assets[0].uri);
@@ -62,7 +71,7 @@ const StepThree = ({
         image: projectImage
       };
       
-      setProjects([...projects, newProject]);
+      updateProjects([...projectsList, newProject]);
       
       // Réinitialiser les champs
       setTitle('');
@@ -75,13 +84,13 @@ const StepThree = ({
 
   // Fonction pour supprimer un projet
   const handleRemoveProject = (id: string) => {
-    setProjects(projects.filter(project => project.id !== id));
+    updateProjects(projectsList.filter(project => project.id !== id));
   };
 
   return (
     <ScrollView>
       <View style={globalStyles.formContainer}>
-        {projects.map((project) => (
+        {projectsList.map((project) => (
           <InfoCard
             key={project.id}
             id={project.id}
@@ -131,10 +140,6 @@ const StepThree = ({
 };
 
 const styles = StyleSheet.create({
-  formContainer: {
-    gap: 16,
-    marginBottom: 24,
-  },
   imageContainer: {
     alignItems: "center",
     marginVertical: 10,

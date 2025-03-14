@@ -89,8 +89,7 @@ export const AuthProvider = ({ children }: any) => {
         token: result.data.token,
         authenticated: true,
       });
-      // router.push("(tabs)/Dashboard");
-      router.push("screens/MultiStepForm");
+      router.push("(tabs)/Dashboard");
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${result.data.token}`;
