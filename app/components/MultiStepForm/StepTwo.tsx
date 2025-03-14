@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, Image, Text } from "react-native";
 import { globalStyles } from "@/app/styles/styles";
 import * as ImagePicker from "expo-image-picker";
@@ -6,6 +6,8 @@ import * as ImagePicker from "expo-image-picker";
 import { Input } from "@/app/components/ui/Input";
 import { InputFile } from "@/app/components/ui/InputFIle";
 import { ButtonFull } from "@/app/components/ui/ButtonFull";
+import { InfoCard } from "@/app/components/ui/InfoCard";
+import { Skill } from "@/app/interface/skill";
 
 interface StepTwoProps {
   skillName: string;
@@ -15,6 +17,9 @@ interface StepTwoProps {
 }
 
 const StepTwo = ({ skillName, setSkillName, skillImage, setSkillImage }: StepTwoProps) => {
+  // Ajouter l'état pour stocker les compétences
+  const [skills, setSkills] = useState<Skill[]>([]);
+  
   const handleSelectImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -27,9 +32,41 @@ const StepTwo = ({ skillName, setSkillName, skillImage, setSkillImage }: StepTwo
     }
   };
 
+  // Ajouter la fonction pour gérer l'ajout d'une compétence
+  const handleAddSkill = () => {
+    if (skillName.trim() !== '') {
+      const newSkill: Skill = {
+        id: Date.now().toString(),
+        name: skillName,
+        image: skillImage,
+      };
+      
+      setSkills([...skills, newSkill]);
+      
+      // Réinitialiser les champs
+      setSkillName('');
+      setSkillImage(null);
+    }
+  };
+
+  // Ajouter la fonction pour supprimer une compétence
+  const handleRemoveSkill = (id: string) => {
+    setSkills(skills.filter(skill => skill.id !== id));
+  };
+
   return (
     <ScrollView>
       <View style={globalStyles.formContainer}>
+      {skills.map((skill) => (
+        <InfoCard
+          key={skill.id}
+          id={skill.id}
+          title={skill.name}
+          image={skill.image}
+          onRemove={handleRemoveSkill}
+          imageStyle={styles.skillCardImage} 
+        />
+      ))}
         <Input 
           label="Nom de la compétence" 
           value={skillName} 
@@ -43,8 +80,8 @@ const StepTwo = ({ skillName, setSkillName, skillImage, setSkillImage }: StepTwo
           </View>
         ) : null}
         <ButtonFull 
-          text="Ajouter la compétence"
-          onPress={() => {}}
+          text="Ajouter une autre compétence"
+          onPress={handleAddSkill}
         />
       </View>
     </ScrollView>
@@ -67,6 +104,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
   },
+  skillCardImage: {
+    width: 50, 
+    height: 50,
+    borderRadius: 8,
+    marginRight: 10
+  }
 });
 
 export default StepTwo;

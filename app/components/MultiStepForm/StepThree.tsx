@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, Image, Text } from "react-native";
 import { globalStyles } from "@/app/styles/styles";
 import * as ImagePicker from "expo-image-picker";
@@ -7,6 +7,8 @@ import { Input } from "@/app/components/ui/Input";
 import { TextArea } from "@/app/components/ui/TextArea";
 import { InputFile } from "@/app/components/ui/InputFIle";
 import { ButtonFull } from "@/app/components/ui/ButtonFull";
+import { InfoCard } from "@/app/components/ui/InfoCard";
+import { Project } from "@/app/interface/project";
 
 interface StepThreeProps {
   title: string;
@@ -33,6 +35,9 @@ const StepThree = ({
   projectImage,
   setProjectImage,
 }: StepThreeProps) => {
+  // Ajouter l'état pour stocker les projets
+  const [projects, setProjects] = useState<Project[]>([]);
+
   const handleSelectImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -45,9 +50,50 @@ const StepThree = ({
     }
   };
 
+  // Fonction pour ajouter un projet
+  const handleAddProject = () => {
+    if (title.trim() !== '') {
+      const newProject: Project = {
+        id: Date.now().toString(),
+        title,
+        description,
+        linkName,
+        linkUrl,
+        image: projectImage
+      };
+      
+      setProjects([...projects, newProject]);
+      
+      // Réinitialiser les champs
+      setTitle('');
+      setDescription('');
+      setLinkName('');
+      setLinkUrl('');
+      setProjectImage(null);
+    }
+  };
+
+  // Fonction pour supprimer un projet
+  const handleRemoveProject = (id: string) => {
+    setProjects(projects.filter(project => project.id !== id));
+  };
+
   return (
     <ScrollView>
       <View style={globalStyles.formContainer}>
+        {projects.map((project) => (
+          <InfoCard
+            key={project.id}
+            id={project.id}
+            title={project.title}
+            subtitle={project.description}
+            image={project.image}
+            additionalText={project.linkName ? `Lien: ${project.linkName}` : undefined}
+            onRemove={handleRemoveProject}
+            imageStyle={styles.projectImage}
+            titleStyle={styles.projectTitle}
+          />
+        ))}
         <Input 
           label="Titre du projet" 
           value={title}
@@ -76,8 +122,8 @@ const StepThree = ({
           </View>
         ) : null}
         <ButtonFull 
-          text="Ajouter le projet"
-          onPress={() => {}}
+          text="Ajouter un autre projet"
+          onPress={handleAddProject}
         />
       </View>
     </ScrollView>
@@ -104,6 +150,17 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
   },
+  projectImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 10
+  },
+  projectTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#3E3F92'
+  }
 });
 
 export default StepThree;
