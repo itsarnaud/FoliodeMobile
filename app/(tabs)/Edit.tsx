@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
 import { globalStyles } from "../styles/styles";
 
 import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
 import { TemplateCard } from "@/app/components/ui/Template/SelectTemplate";
 import { PresetCard } from "@/app/components/ui/Template/SelectPreset";
+import { templates } from "@/app/interface/Template";
 
 const Edit = () => {
-  const [isCheckedTemplate, setIsCheckedTemplate] = useState(false);
-  const [isCheckedPreset, setIsCheckedPreset] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 
   return (
     <>
@@ -21,15 +22,17 @@ const Edit = () => {
           />
           <TemplateCard
             title="Les templates"
-            isChecked={isCheckedTemplate}
-            onToggle={() => setIsCheckedTemplate(!isCheckedTemplate)}
-            imageUri="https://picsum.photos/500/300?random=1"
+            selectedTemplate={selectedTemplate}
+            onTemplateSelect={setSelectedTemplate}
+            templates={templates}
           />
 
           <PresetCard
             title="Preset de couleur"
-            isChecked={isCheckedPreset}
-            onToggle={() => setIsCheckedPreset(!isCheckedPreset)}
+            selectedTemplate={templates.find(t => t.id === selectedTemplate) || null}
+            templates={templates}
+            selectedPreset={selectedPreset}
+            onPresetSelect={setSelectedPreset}
           />
         </ScrollView>
     </>

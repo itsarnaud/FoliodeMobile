@@ -20,7 +20,7 @@ import {
 } from "lucide-react-native";
 
 const Login = () => {
-  const [email, setEmail] = useState("t@t.com");
+  const [email, setEmail] = useState("w@t.com");
   const [password, setPassword] = useState("azerty1234");
   const { onLogin } = useAuth();
   const [showPassword, setShowPassword] = useState(false);

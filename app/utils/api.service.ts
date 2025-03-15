@@ -1,22 +1,52 @@
 import axios from "axios";
- 
-export const createPortfolio = async (payload: any) => {
+import { PortfolioData } from "../interface/portfolioData";
+
+export const API_BASE_URL = "http://192.168.1.22:8080";
+const API_PATH = `${API_BASE_URL}/api`;
+
+const prepareImageFile = (imageUri: string | null): any => {
+  if (!imageUri) return null;
+  
+  const filename = imageUri.split("/").pop() || "image.jpg";
+  const match = /\.(\w+)$/.exec(filename);
+  const type = match ? `image/${match[1]}` : "image/jpeg";
+  
+  return {
+    uri: imageUri,
+    name: filename,
+    type,
+  };
+};
+
+const getAuthHeader = () => {
   const token = axios.defaults.headers.common["Authorization"];
+  return { Authorization: token };
+};
+
+/**
+ * Crée un nouveau portfolio
+ * @param payload - Données du portfolio
+ */
+export const createPortfolio = async (payload: any) => {
   try {
     const response = await axios.post(
-      `http://192.168.1.22:8080/api/portfolio`,
+      `${API_PATH}/portfolio`,
       payload,
-      { headers: { Authorization: token } }
+      { headers: getAuthHeader() }
     );
     return response.data;
   } catch (error) {
+    console.error("Erreur lors de la création du portfolio:", error);
     throw error;
   }
 };
 
+/**
+ * Crée un nouveau projet
+ * @param projectData - Données du projet
+ * @param imageUri - URI de l'image à associer au projet
+ */
 export const createProject = async (projectData: any, imageUri: string | null) => {
-  const token = axios.defaults.headers.common["Authorization"];
-  
   try {
     const formData = new FormData();
     
@@ -32,23 +62,15 @@ export const createProject = async (projectData: any, imageUri: string | null) =
     );
     
     if (imageUri) {
-      const filename = imageUri.split("/").pop() || "image.jpg";
-      const match = /\.(\w+)$/.exec(filename);
-      const type = match ? `image/${match[1]}` : "image/jpeg";
-      
-      formData.append("images[0]", {
-        uri: imageUri,
-        name: filename,
-        type,
-      } as any);
+      formData.append("images[0]", prepareImageFile(imageUri) as any);
     }
     
     const response = await axios.post(
-      `http://192.168.1.22:8080/api/project`,
+      `${API_PATH}/project`,
       formData,
       { 
         headers: { 
-          Authorization: token,
+          ...getAuthHeader(),
           "Content-Type": "multipart/form-data",
         }
       }
@@ -56,36 +78,32 @@ export const createProject = async (projectData: any, imageUri: string | null) =
     
     return response.data;
   } catch (error) {
+    console.error("Erreur lors de la création du projet:", error);
     throw error;
   }
 };
 
+/**
+ * Crée une nouvelle compétence
+ * @param skillData - Données de la compétence
+ * @param imageUri - URI de l'image à associer à la compétence
+ */
 export const createSkills = async (skillData: any, imageUri: string | null) => {
-  const token = axios.defaults.headers.common["Authorization"];
-
   try {
     const formData = new FormData();
     
     formData.append("tools[0][name]", skillData.name);
     
     if (imageUri) {
-      const filename = imageUri.split("/").pop() || "image.jpg";
-      const match = /\.(\w+)$/.exec(filename);
-      const type = match ? `image/${match[1]}` : "image/jpeg";
-      
-      formData.append("tools[0][image]", {
-        uri: imageUri,
-        name: filename,
-        type,
-      } as any);
+      formData.append("tools[0][image]", prepareImageFile(imageUri) as any);
     }
     
     const response = await axios.post(
-      `http://192.168.1.22:8080/api/portfolio/tools`,
+      `${API_PATH}/portfolio/tools`,
       formData,
       {
         headers: {
-          Authorization: token,
+          ...getAuthHeader(),
           "Content-Type": "multipart/form-data",
         },
       }
@@ -93,6 +111,23 @@ export const createSkills = async (skillData: any, imageUri: string | null) => {
     
     return response.data;
   } catch (error) {
+    console.error("Erreur lors de la création de la compétence:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get les données  portfolio des user
+ */
+export const getPortfolio = async (): Promise<PortfolioData> => {
+  try {
+    const response = await axios.get(
+      `${API_PATH}/portfolio`,
+      { headers: getAuthHeader() }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération du portfolio:", error);
     throw error;
   }
 };
