@@ -7,9 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useState } from "react";
 import {
   Mail,
   ArrowLeft,

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useColorScheme, StyleSheet, Button } from "react-native";
+import { useColorScheme, StyleSheet } from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,7 +13,7 @@ import { AuthProvider, useAuth } from "../app/context/AuthContext";
 import { ArrowLeft } from "lucide-react-native";
 import { useRouter } from "expo-router";
 
-export default function Layout() {
+export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { authState, onLogout } = useAuth();
   const router = useRouter();
@@ -29,6 +29,8 @@ export default function Layout() {
         <SafeAreaView style={styles.container}>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="screens/MultiStepForm" options={{ headerShown: false }} />
             <Stack.Screen name="screens/Home" />
             <Stack.Screen
                 name="screens/Register"

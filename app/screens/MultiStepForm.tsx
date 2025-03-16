@@ -13,7 +13,11 @@ import { Template, templates } from "@/app/interface/Template";
 import { Project } from "@/app/interface/project";
 import { Skill } from "@/app/interface/skill";
 import { useRouter } from "expo-router";
+import { usePortfolio } from "@/app/context/PortfolioContext";
+
 const MultiStepForm = () => {
+  const { fetchPortfolioData } = usePortfolio();
+  const router = useRouter();
   const [step, setStep] = useState(1);
 
   // États step 1
@@ -53,7 +57,6 @@ const MultiStepForm = () => {
 
   
 const handleSubmit = async () => {
-  const router = useRouter();
   const defaultTemplate = templates[0];
   const portfolioPayload = {
     title: userTitle,
@@ -111,6 +114,10 @@ const handleSubmit = async () => {
     }
 
     console.log("Portfolio, compétences et projets envoyés avec succès.");
+    
+    // Rafraîchir les données du portfolio après toutes les opérations
+    await fetchPortfolioData();
+    
     router.push("(tabs)/Dashboard");
   } catch (error) {
     console.error("Erreur lors de l'envoi finale :", error);

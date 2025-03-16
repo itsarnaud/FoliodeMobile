@@ -5,7 +5,7 @@ import { ArrowUpRight, Subtitles } from "lucide-react-native";
 interface ProjectCardItem {
   title: string;
   subtitle?: string;
-  image: string;
+  image: string | null;
 }
 
 interface ProjectCardProps {
@@ -24,7 +24,11 @@ export function ProjectCard({ headerTitle, data, voirplus }: ProjectCardProps) {
       {data.map((project, index) => (
         <View style={styles.cardContent} key={index}>
           <View style={styles.contentRight}>
-            <Image source={{ uri: project.image }} style={styles.imageStyle} />
+            {project.image ? (
+              <Image source={{ uri: project.image }} style={styles.imageStyle} />
+            ) : (
+              <View style={[styles.imageStyle, styles.noImage]} />
+            )}
             <View style={styles.textRight}>
               <Text style={styles.titreProjet}>{project.title}</Text>
               {project.subtitle && (
@@ -96,5 +100,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#3E3F92",
     borderRadius: 100,
     padding: 5,
+  },
+  noImage: {
+    backgroundColor: '#2A2A2A',
   },
 });

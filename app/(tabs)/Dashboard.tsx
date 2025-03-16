@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, StyleSheet, ScrollView, Text, ActivityIndicator } from "react-native";
 import { globalStyles } from "../styles/styles";
 
@@ -7,43 +7,15 @@ import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
 import { ProjectCard } from "@/app/components/ui/ProjectCardItem";
 import { useUserData } from "@/app/utils/tokenData";
-import { getPortfolio, API_BASE_URL } from "@/app/utils/api.service";
-import { PortfolioData } from "@/app/interface/portfolioData";
+import { usePortfolio } from "@/app/context/PortfolioContext";
 
 const Dashboard = () => {
   const userData = useUserData();
-  const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPortfolioData = async () => {
-      try {
-        setLoading(true);
-        const data = await getPortfolio();
-        setPortfolio(data);
-        setError(null);
-      } catch (err) {
-        console.error("Erreur lors du chargement du portfolio:", err);
-        setError("Impossible de charger les données du portfolio");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPortfolioData();
-  }, []);
+  const { portfolio, loading, error, getCompleteImageUrl } = usePortfolio();
 
   if (!userData) {
     return null;
   }
-
-  // Fonction pour construire l'URL complète d'une image
-  const getCompleteImageUrl = (imagePath: string) => {
-    if (!imagePath) return "https://picsum.photos/500/300?random=1";
-    if (imagePath.startsWith('http')) return imagePath;
-    return `${API_BASE_URL}/${imagePath}`;
-  };
 
   return (
     <>
@@ -82,7 +54,7 @@ const Dashboard = () => {
                   subtitle: project.description,
                   image: project.projectsImages && project.projectsImages.length > 0 
                     ? getCompleteImageUrl(project.projectsImages[0].img_src)
-                    : "https://picsum.photos/500/300?random=1"
+                    : null
                 }))}
               />
             ) : (

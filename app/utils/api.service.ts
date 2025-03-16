@@ -50,12 +50,20 @@ export const createProject = async (projectData: any, imageUri: string | null) =
   try {
     const formData = new FormData();
     
+    // Préparation des liens du projet
+    const projectsLinks = projectData.links && projectData.links.length > 0 
+      ? projectData.links.map((link: any) => ({
+          name: link.name,
+          url: link.url
+        }))
+      : [];
+    
     formData.append(
       "json",
       JSON.stringify({
         title: projectData.title,
         description: projectData.description,
-        projectsLinks: projectData.links || [],
+        projectsLinks: projectsLinks,
         images: [],
         projectsImages: []
       })
@@ -128,6 +136,24 @@ export const getPortfolio = async (): Promise<PortfolioData> => {
     return response.data;
   } catch (error) {
     console.error("Erreur lors de la récupération du portfolio:", error);
+    throw error;
+  }
+};
+
+/**
+ * Met à jour les paramètres du portfolio
+ * @param settings - Paramètres à mettre à jour
+ */
+export const updatePortfolio = async (settings: Partial<any>) => {
+  try {
+    const response = await axios.put(
+      `${API_PATH}/portfolio`,
+      settings,
+      { headers: getAuthHeader() }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du portfolio:", error);
     throw error;
   }
 };

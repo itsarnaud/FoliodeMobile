@@ -1,6 +1,7 @@
-import React from "react";
-import { ScrollView, View, Platform } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, View, Text, StyleSheet, Image } from "react-native";
 import { globalStyles } from "@/app/styles/styles";
+import * as ImagePicker from "expo-image-picker";
 
 import { Input } from "@/app/components/ui/Input";
 import { TextArea } from "@/app/components/ui/TextArea";
@@ -9,17 +10,82 @@ import { ButtonFull } from "@/app/components/ui/ButtonFull";
 import { ProjectCard } from "@/app/components/ui/ProjectCardItem";
 import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
+import { createProject } from "@/app/utils/api.service";
+import { usePortfolio } from "@/app/context/PortfolioContext";
 
 const Project = () => {
-  // va faloir utilise expo image picker a la place
-  const handleSelectImage = () => {
-    Platform.OS === "web";
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = () => {};
-    input.click();
+  const { portfolio, loading, fetchPortfolioData, getCompleteImageUrl } = usePortfolio();
+  const [projectTitle, setProjectTitle] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [linkName, setLinkName] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
+  const [projectImage, setProjectImage] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSelectImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.1,
+      });
+      
+      if (!result.canceled) {
+        setProjectImage(result.assets[0].uri);
+      }
+    } catch (e) {
+      console.error("Erreur lors de la sélection de l'image:", e);
+      setError("Impossible de sélectionner l'image");
+    }
   };
+
+  const handleAddProject = async () => {
+    if (!projectTitle.trim()) {
+      setError("Le titre du projet est requis");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setError(null);
+
+      // Création des liens si nécessaire
+      const links = [];
+      if (linkName && linkUrl) {
+        links.push({
+          name: linkName,
+          url: linkUrl,
+        });
+      }
+
+      await createProject(
+        {
+          title: projectTitle,
+          description: projectDescription,
+          links
+        },
+        projectImage
+      );
+      
+      // Réinitialiser les champs du formulaire
+      setProjectTitle("");
+      setProjectDescription("");
+      setLinkName("");
+      setLinkUrl("");
+      setProjectImage(null);
+      
+      // Rafraîchir les données du portfolio
+      await fetchPortfolioData();
+    } catch (err) {
+      setError("Erreur lors de l'ajout du projet");
+      console.error("Erreur:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <>
       <HeaderLogo />
@@ -30,35 +96,104 @@ const Project = () => {
           description="Vous pouvez ajouter vos projets ici"
         />
         <View style={globalStyles.formContainer}>
-          <Input label="Email"/>
+          <Input 
+            label="Titre du projet" 
+            value={projectTitle}
+            onChangeText={setProjectTitle}
+          />
           <TextArea
             label="Description du projet"
+            value={projectDescription}
+            onChangeText={setProjectDescription}
           />
 
-          <Input label="Email"/>
+          <Input 
+            label="Nom du lien" 
+            value={linkName}
+            onChangeText={setLinkName}
+          />
+          <Input 
+            label="URL du lien" 
+            value={linkUrl}
+            onChangeText={setLinkUrl}
+          />
 
           <InputFile onPress={handleSelectImage} />
 
-          <ButtonFull text="Ajouter le projet" />
+          {projectImage ? (
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: projectImage }} style={styles.image} />
+              <Text style={styles.imageText}>Image sélectionnée</Text>
+            </View>
+          ) : null}
+
+          {error && <Text style={styles.errorText}>{error}</Text>}
+
+          <ButtonFull 
+            text={saving ? "Ajout en cours..." : "Ajouter le projet"} 
+            onPress={handleAddProject}
+            // disabled={saving}
+          />
         </View>
-        <ProjectCard
-          headerTitle="Vos Projets"
-          data={[
-            {
-              title: "Foliode",
-              subtitle: "12/02/03",
-              image: "https://picsum.photos/500/300?random=1",
-            },
-            {
-              title: "Site de vente de sushi",
-              subtitle: "12/02/03",
-              image: "https://picsum.photos/500/300?random=1",
-            },
-          ]}
-        />
+
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Chargement des projets...</Text>
+          </View>
+        ) : portfolio?.projects && portfolio.projects.length > 0 ? (
+          <ProjectCard
+            headerTitle="Vos Projets"
+            data={portfolio.projects.map(project => ({
+              title: project.title,
+              subtitle: project.description || "",
+              image: project.projectsImages && project.projectsImages.length > 0 
+                ? getCompleteImageUrl(project.projectsImages[0].img_src)
+                : null
+            }))}
+          />
+        ) : (
+          <Text style={styles.noProjectsText}>Aucun projet disponible.</Text>
+        )}
       </ScrollView>
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  imageContainer: {
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  image: {
+    width: "100%",
+    height: 200,
+    borderRadius: 13,
+    resizeMode: "cover",
+  },
+  imageText: {
+    color: "#7D7E83",
+    marginTop: 8,
+    fontSize: 14,
+  },
+  errorText: {
+    color: "#FF6161",
+    textAlign: "center",
+    marginVertical: 10,
+  },
+  loadingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  loadingText: {
+    color: "#FFFFFF",
+    marginTop: 10,
+  },
+  noProjectsText: {
+    color: "#7D7E83",
+    textAlign: "center",
+    padding: 20,
+  }
+});
 
 export default Project;
