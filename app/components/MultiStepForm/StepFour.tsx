@@ -7,6 +7,7 @@ import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
 import { TemplateCard } from "@/app/components/ui/Template/SelectTemplate";
 import { PresetCard } from "@/app/components/ui/Template/SelectPreset";
 import { templates, Template } from "@/app/interface/Template";
+
 interface StepFourProps {
   onTemplateSelect: (template: Template) => void;
   onColorSelect: (colors: Template["color"]) => void;

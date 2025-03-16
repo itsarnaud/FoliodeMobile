@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Platform } from "react-native";
 import { PortfolioProvider } from "../context/PortfolioContext";
 
+
 export default function TabLayout() {
   useEffect(() => {
     NavigationBar.setBackgroundColorAsync("#0E0E0E");

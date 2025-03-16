@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { globalStyles } from "../../../styles/styles";
 import { Template } from "@/app/interface/Template";
+
 interface PresetCardProps {
   title: string;
   selectedTemplate: Template | null;

@@ -29,18 +29,14 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [error, setError] = useState<string | null>(null);
 
   const fetchPortfolioData = async () => {
-    if (!authState?.authenticated) {
-      return;
-    }
-    
+    if (!authState?.authenticated) return;
     try {
       setLoading(true);
       const data = await getPortfolio();
       setPortfolio(data);
       setError(null);
     } catch (err) {
-      console.error("Erreur lors du chargement du portfolio:", err);
-      setError("Impossible de charger les données du portfolio");
+      setError("Erreur lors du chargement du portfolio");
     } finally {
       setLoading(false);
     }
@@ -60,7 +56,6 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   };
 
-  // Fonction pour construire l'URL complète d'une image
   const getCompleteImageUrl = (imagePath: string) => {
     if (!imagePath) return null;
     if (imagePath.startsWith('http')) return imagePath;

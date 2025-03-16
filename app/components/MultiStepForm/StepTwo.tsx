@@ -26,10 +26,8 @@ const StepTwo = ({
   skills = [],
   setSkills = () => {}
 }: StepTwoProps) => {
-  // État local pour les compétences, utilisé seulement si les props ne sont pas fournies
   const [localSkills, setLocalSkills] = useState<Skill[]>([]);
   
-  // Utiliser soit les props, soit l'état local
   const skillsList = skills.length > 0 ? skills : localSkills;
   const updateSkills = setSkills || setLocalSkills;
   
@@ -45,7 +43,6 @@ const StepTwo = ({
     }
   };
 
-  // Ajouter la fonction pour gérer l'ajout d'une compétence
   const handleAddSkill = () => {
     if (skillName.trim() !== '') {
       const newSkill: Skill = {
@@ -56,13 +53,11 @@ const StepTwo = ({
       
       updateSkills([...skillsList, newSkill]);
       
-      // Réinitialiser les champs
       setSkillName('');
       setSkillImage(null);
     }
   };
 
-  // Ajouter la fonction pour supprimer une compétence
   const handleRemoveSkill = (id: string) => {
     updateSkills(skillsList.filter(skill => skill.id !== id));
   };

@@ -36,7 +36,8 @@ export function ProjectCard({ headerTitle, data, voirplus }: ProjectCardProps) {
               )}
             </View>
           </View>
-          <TouchableOpacity style={styles.containerArrow}>
+          <TouchableOpacity style={styles.containerArrow}
+            onPress={() => { /* ...actiononClick... */ }}>
             <ArrowUpRight style={styles.arrow} size={22} />
           </TouchableOpacity>
         </View>

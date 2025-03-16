@@ -20,18 +20,15 @@ const MultiStepForm = () => {
   const router = useRouter();
   const [step, setStep] = useState(1);
 
-  // États step 1
   const [username, setUsername] = useState("");
   const [userTitle, setUserTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [presentation, setPresentation] = useState("");
 
-  // États step 2 - Compétence
   const [skillName, setSkillName] = useState("");
   const [skillImage, setSkillImage] = useState<string | null>(null);
   const [skills, setSkills] = useState<Skill[]>([]);
 
-  // États step 3 - Projet
   const [projectTitle, setProjectTitle] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [projectLinkName, setProjectLinkName] = useState("");
@@ -39,7 +36,6 @@ const MultiStepForm = () => {
   const [projectImage, setProjectImage] = useState<string | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
 
-  // États step 4
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [selectedColors, setSelectedColors] = useState<Template["color"] | null>(null);
 
@@ -55,12 +51,11 @@ const MultiStepForm = () => {
     }
   };
 
-  
 const handleSubmit = async () => {
   const defaultTemplate = templates[0];
   const portfolioPayload = {
     title: userTitle,
-    subtitle: subtitle,
+    subtitle,
     bio: presentation,
     url: `exemple-${Date.now()}`,
     config: {
@@ -71,56 +66,44 @@ const handleSubmit = async () => {
   };
 
   try {
-    // Envoi du portfolio
     await createPortfolio(portfolioPayload);
 
-    // Envoi des compétences déjà ajoutées
-    for (const skill of skills) {
-      await createSkills({ name: skill.name }, skill.image);
+    const allSkills = [...skills];
+    if (skillName.trim()) {
+      allSkills.push({
+        id: Date.now().toString(), 
+        name: skillName,
+        image: skillImage,
+      });
     }
-    
-    if (skillName.trim() !== "") {
-      await createSkills({ name: skillName }, skillImage);
+    for (const s of allSkills) {
+      await createSkills({ name: s.name }, s.image);
     }
 
-    for (const project of projects) {
-      const links = [];
-      if (project.linkName && project.linkUrl) {
-        links.push({
-          name: project.linkName,
-          url: project.linkUrl,
-        });
-      }
-
+    const allProjects = [...projects];
+    if (projectTitle.trim()) {
+      allProjects.push({
+        id: Date.now().toString(),
+        title: projectTitle,
+        description: projectDescription,
+        image: projectImage,
+        linkName: projectLinkName,
+        linkUrl: projectLinkUrl,
+      });
+    }
+    for (const p of allProjects) {
+      const links = p.linkName && p.linkUrl ? [{ name: p.linkName, url: p.linkUrl }] : [];
       await createProject(
-        { title: project.title, description: project.description, links },
-        project.image
+        { title: p.title, description: p.description, links },
+        p.image
       );
     }
 
-    if (projectTitle.trim() !== "") {
-      const links = [];
-      if (projectLinkName && projectLinkUrl) {
-        links.push({
-          name: projectLinkName,
-          url: projectLinkUrl,
-        });
-      }
-
-      await createProject(
-        { title: projectTitle, description: projectDescription, links },
-        projectImage
-      );
-    }
-
-    console.log("Portfolio, compétences et projets envoyés avec succès.");
-    
-    // Rafraîchir les données du portfolio après toutes les opérations
+    console.log("Tout envoyé avec succès.");
     await fetchPortfolioData();
-    
     router.push("(tabs)/Dashboard");
   } catch (error) {
-    console.error("Erreur lors de l'envoi finale :", error);
+    console.error("Erreur lors de l'envoi final :", error);
   }
 };
 

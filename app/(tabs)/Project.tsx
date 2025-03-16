@@ -46,44 +46,26 @@ const Project = () => {
       setError("Le titre du projet est requis");
       return;
     }
-
     try {
       setSaving(true);
       setError(null);
-
-      // Création des liens si nécessaire
-      const links = [];
-      if (linkName && linkUrl) {
-        links.push({
-          name: linkName,
-          url: linkUrl,
-        });
-      }
-
-      await createProject(
-        {
-          title: projectTitle,
-          description: projectDescription,
-          links
-        },
-        projectImage
-      );
-      
-      // Réinitialiser les champs du formulaire
-      setProjectTitle("");
-      setProjectDescription("");
-      setLinkName("");
-      setLinkUrl("");
-      setProjectImage(null);
-      
-      // Rafraîchir les données du portfolio
+      const links = linkName && linkUrl ? [{ name: linkName, url: linkUrl }] : [];
+      await createProject({ title: projectTitle, description: projectDescription, links }, projectImage);
+      resetForm();
       await fetchPortfolioData();
     } catch (err) {
       setError("Erreur lors de l'ajout du projet");
-      console.error("Erreur:", err);
     } finally {
       setSaving(false);
     }
+  };
+
+  const resetForm = () => {
+    setProjectTitle("");
+    setProjectDescription("");
+    setLinkName("");
+    setLinkUrl("");
+    setProjectImage(null);
   };
 
   return (

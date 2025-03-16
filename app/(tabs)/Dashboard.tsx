@@ -45,25 +45,43 @@ const Dashboard = () => {
               <Card title="Nombre de projets" note={portfolio.projects ? portfolio.projects.length.toString() : "0"} />
             </View>
             
-            {portfolio.projects && portfolio.projects.length > 0 ? (
-              <ProjectCard
-                headerTitle="Vos projets"
-                voirplus="Voir plus"
-                data={portfolio.projects.map(project => ({
-                  title: project.title,
-                  subtitle: project.description,
-                  image: project.projectsImages && project.projectsImages.length > 0 
-                    ? getCompleteImageUrl(project.projectsImages[0].img_src)
-                    : null
-                }))}
-              />
-            ) : (
-              <Text style={styles.noProjectsText}>Aucun projet trouvé. Ajoutez des projets dans l'onglet Ajouter.</Text>
-            )}
+            <ProjectDisplay projects={portfolio.projects} getCompleteImageUrl={getCompleteImageUrl} />
           </>
         ) : null}
       </ScrollView>
     </>
+  );
+};
+
+interface ProjectItem {
+  title: string;
+  description?: string;
+  projectsImages?: { img_src: string }[];
+}
+
+interface ProjectDisplayProps {
+  projects: ProjectItem[];
+  getCompleteImageUrl: (imagePath: string) => string | null;
+}
+
+const ProjectDisplay: React.FC<ProjectDisplayProps> = ({ projects, getCompleteImageUrl }) => {
+  return projects && projects.length > 0 ? (
+    <ProjectCard
+      headerTitle="Vos projets"
+      voirplus="Voir plus"
+      data={projects.map((project: ProjectItem) => ({
+        title: project.title,
+        subtitle: project.description,
+        image:
+          project.projectsImages && project.projectsImages.length > 0
+            ? getCompleteImageUrl(project.projectsImages[0].img_src)
+            : null,
+      }))}
+    />
+  ) : (
+    <Text style={styles.noProjectsText}>
+      Aucun projet trouvé. Ajoutez des projets dans l'onglet Ajouter.
+    </Text>
   );
 };
 

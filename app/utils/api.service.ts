@@ -50,7 +50,6 @@ export const createProject = async (projectData: any, imageUri: string | null) =
   try {
     const formData = new FormData();
     
-    // Préparation des liens du projet
     const projectsLinks = projectData.links && projectData.links.length > 0 
       ? projectData.links.map((link: any) => ({
           name: link.name,

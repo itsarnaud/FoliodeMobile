@@ -21,7 +21,6 @@ interface StepThreeProps {
   setLinkUrl: (value: string) => void;
   projectImage: string | null;
   setProjectImage: (value: string | null) => void;
-  // Ajout des propriétés pour gérer la liste des projets
   projects?: Project[];
   setProjects?: (projects: Project[]) => void;
 }
@@ -40,10 +39,8 @@ const StepThree = ({
   projects = [],
   setProjects = () => {},
 }: StepThreeProps) => {
-  // Utiliser l'état local uniquement si les props projects/setProjects ne sont pas fournies
   const [localProjects, setLocalProjects] = useState<Project[]>([]);
   
-  // Utiliser soit les props, soit l'état local
   const projectsList = projects.length > 0 ? projects : localProjects;
   const updateProjects = setProjects || setLocalProjects;
 
@@ -59,7 +56,6 @@ const StepThree = ({
     }
   };
 
-  // Fonction pour ajouter un projet
   const handleAddProject = () => {
     if (title.trim() !== '') {
       const newProject: Project = {
@@ -73,7 +69,6 @@ const StepThree = ({
       
       updateProjects([...projectsList, newProject]);
       
-      // Réinitialiser les champs
       setTitle('');
       setDescription('');
       setLinkName('');
@@ -82,7 +77,6 @@ const StepThree = ({
     }
   };
 
-  // Fonction pour supprimer un projet
   const handleRemoveProject = (id: string) => {
     updateProjects(projectsList.filter(project => project.id !== id));
   };
