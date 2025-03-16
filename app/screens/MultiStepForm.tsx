@@ -13,9 +13,9 @@ import { Template, templates } from "@/app/interface/Template";
 import { Project } from "@/app/interface/project";
 import { Skill } from "@/app/interface/skill";
 import { useRouter } from "expo-router";
-import { usePortfolio } from "@/app/context/PortfolioContext";
+import { PortfolioProvider, usePortfolio } from "@/app/context/PortfolioContext";
 
-const MultiStepForm = () => {
+const MultiStepFormContent = () => {
   const { fetchPortfolioData } = usePortfolio();
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -51,61 +51,61 @@ const MultiStepForm = () => {
     }
   };
 
-const handleSubmit = async () => {
-  const defaultTemplate = templates[0];
-  const portfolioPayload = {
-    title: userTitle,
-    subtitle,
-    bio: presentation,
-    url: `exemple-${Date.now()}`,
-    config: {
-      colors: selectedColors || defaultTemplate.color,
-      font: "",
-    },
-    template: selectedTemplate?.id || defaultTemplate.id,
+  const handleSubmit = async () => {
+    const defaultTemplate = templates[0];
+    const portfolioPayload = {
+      title: userTitle,
+      subtitle,
+      bio: presentation,
+      url: `exemple-${Date.now()}`,
+      config: {
+        colors: selectedColors || defaultTemplate.color,
+        font: "",
+      },
+      template: selectedTemplate?.id || defaultTemplate.id,
+    };
+
+    try {
+      await createPortfolio(portfolioPayload);
+
+      const allSkills = [...skills];
+      if (skillName.trim()) {
+        allSkills.push({
+          id: Date.now().toString(), 
+          name: skillName,
+          image: skillImage,
+        });
+      }
+      for (const s of allSkills) {
+        await createSkills({ name: s.name }, s.image);
+      }
+
+      const allProjects = [...projects];
+      if (projectTitle.trim()) {
+        allProjects.push({
+          id: Date.now().toString(),
+          title: projectTitle,
+          description: projectDescription,
+          image: projectImage,
+          linkName: projectLinkName,
+          linkUrl: projectLinkUrl,
+        });
+      }
+      for (const p of allProjects) {
+        const links = p.linkName && p.linkUrl ? [{ name: p.linkName, url: p.linkUrl }] : [];
+        await createProject(
+          { title: p.title, description: p.description, links },
+          p.image
+        );
+      }
+
+      console.log("Tout envoyé avec succès.");
+      await fetchPortfolioData();
+      router.push("(tabs)/Dashboard");
+    } catch (error) {
+      console.error("Erreur lors de l'envoi final :", error);
+    }
   };
-
-  try {
-    await createPortfolio(portfolioPayload);
-
-    const allSkills = [...skills];
-    if (skillName.trim()) {
-      allSkills.push({
-        id: Date.now().toString(), 
-        name: skillName,
-        image: skillImage,
-      });
-    }
-    for (const s of allSkills) {
-      await createSkills({ name: s.name }, s.image);
-    }
-
-    const allProjects = [...projects];
-    if (projectTitle.trim()) {
-      allProjects.push({
-        id: Date.now().toString(),
-        title: projectTitle,
-        description: projectDescription,
-        image: projectImage,
-        linkName: projectLinkName,
-        linkUrl: projectLinkUrl,
-      });
-    }
-    for (const p of allProjects) {
-      const links = p.linkName && p.linkUrl ? [{ name: p.linkName, url: p.linkUrl }] : [];
-      await createProject(
-        { title: p.title, description: p.description, links },
-        p.image
-      );
-    }
-
-    console.log("Tout envoyé avec succès.");
-    await fetchPortfolioData();
-    router.push("(tabs)/Dashboard");
-  } catch (error) {
-    console.error("Erreur lors de l'envoi final :", error);
-  }
-};
 
   const steps = [
     {
@@ -218,6 +218,14 @@ const handleSubmit = async () => {
         </View>
       </ScrollView>
     </>
+  );
+};
+
+const MultiStepForm = () => {
+  return (
+    <PortfolioProvider>
+      <MultiStepFormContent />
+    </PortfolioProvider>
   );
 };
 
