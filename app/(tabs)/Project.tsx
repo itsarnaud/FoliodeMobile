@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ScrollView, View, Text, StyleSheet, Image } from "react-native";
 import { globalStyles } from "@/app/styles/styles";
 import * as ImagePicker from "expo-image-picker";
+import { useRouter } from "expo-router";
 
 import { Input } from "@/app/components/ui/Input";
 import { TextArea } from "@/app/components/ui/TextArea";
@@ -15,6 +16,7 @@ import { usePortfolio } from "@/app/context/PortfolioContext";
 
 const Project = () => {
   const { portfolio, loading, fetchPortfolioData, getCompleteImageUrl } = usePortfolio();
+  const router = useRouter();
   const [projectTitle, setProjectTitle] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [linkName, setLinkName] = useState("");
@@ -58,6 +60,13 @@ const Project = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleProjectPress = (projectTitle: string, projectId: string) => {
+    router.push({
+      pathname: '/project-details',
+      params: { title: projectTitle, id: projectId }
+    });
   };
 
   const resetForm = () => {
@@ -130,8 +139,10 @@ const Project = () => {
               subtitle: project.description || "",
               image: project.projectsImages && project.projectsImages.length > 0 
                 ? getCompleteImageUrl(project.projectsImages[0].img_src)
-                : null
+                : null,
+              id: project.id
             }))}
+            onArrowPress={(title, id) => handleProjectPress(title, id)}
           />
         ) : (
           <Text style={styles.noProjectsText}>Aucun projet disponible.</Text>

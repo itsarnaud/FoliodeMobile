@@ -1,7 +1,7 @@
 import axios from "axios";
 import { PortfolioData } from "../interface/portfolioData";
 
-export const API_BASE_URL = "http://192.168.1.22:8080";
+export const API_BASE_URL = "http://192.168.87.143:8081";
 const API_PATH = `${API_BASE_URL}/api`;
 
 const prepareImageFile = (imageUri: string | null): any => {
