@@ -1,7 +1,7 @@
 import axios from "axios";
 import { PortfolioData } from "../interface/portfolioData";
 
-export const API_BASE_URL = "http://192.168.1.22:8080";
+export const API_BASE_URL = "http://172.20.10.3:8080";
 const API_PATH = `${API_BASE_URL}/api`;
 
 const prepareImageFile = (imageUri: string | null): any => {
@@ -153,6 +153,40 @@ export const updatePortfolio = async (settings: Partial<any>) => {
     return response.data;
   } catch (error) {
     console.error("Erreur lors de la mise à jour du portfolio:", error);
+    throw error;
+  }
+};
+
+
+export const getUser = async () => {
+  try {
+    const response = await axios.get(
+      `${API_PATH}/user`,
+      { headers: getAuthHeader() }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des données utilisateur:", error);
+    throw error;
+  }
+};
+
+export const updateUser = async (userData: {
+  firstname?: string;
+  lastname?: string;
+  username?: string;
+  email?: string;
+  password?: string;
+}) => {
+  try {
+    const response = await axios.put(
+      `${API_PATH}/user`,
+      userData,
+      { headers: getAuthHeader() }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
     throw error;
   }
 };

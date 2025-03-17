@@ -1,28 +1,122 @@
-import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, ScrollView, Text } from "react-native";
 import { ButtonFull } from "@/app/components/ui/ButtonFull";
 import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
 import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { globalStyles } from "@/app/styles/styles";
 import { Input } from "@/app/components/ui/Input";
+import { getUser, updateUser } from "@/app/utils/api.service";
+
 const Profile = () => {
+  const [lastname, setLastname] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      setSaving(true);
+      const userData = await getUser();
+      
+      setLastname(userData.lastname || "");
+      setFirstname(userData.firstname || "");
+      setUsername(userData.username || "");
+      setEmail(userData.email || "");
+      
+      setError(null);
+    } catch (err) {
+      console.error("Erreur lors de la récupération des données utilisateur:", err);
+      setError("Impossible de récupérer les données utilisateur");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleUpdateUser = async () => {
+    if (!username.trim() || !email.trim()) {
+      setError("Le nom d'utilisateur et l'email sont requis");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setError(null);
+      
+      const userData = {
+        lastname,
+        firstname,
+        username,
+        email,
+        ...(password.trim() !== "" && { password })
+      };
+      
+      await updateUser(userData);
+      
+      setPassword("");
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour du profil:", err);
+      setError("Impossible de mettre à jour le profil");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <>
       <HeaderLogo />
 
-     <ScrollView style={globalStyles.containerPage}>
+      <ScrollView style={globalStyles.containerPage}>
         <HeaderTitle
           title="Profil"
           description="Vous pouvez modifier les informations de votre profil ici"
         />
 
         <View style={styles.formContainer}>
-          <Input label="Nom" />
-          <Input label="Prénom" />
-          <Input label="Nom d'utilisateur" />
-          <Input label="Email" />
-          <Input label="Mots de passe" />
-          <ButtonFull text="Modifier" />
+          <Input 
+            label="Nom" 
+            value={lastname}
+            onChangeText={setLastname}
+          />
+          <Input 
+            label="Prénom" 
+            value={firstname}
+            onChangeText={setFirstname}
+          />
+          <Input 
+            label="Nom d'utilisateur" 
+            value={username}
+            onChangeText={setUsername}
+          />
+          <Input 
+            label="Email" 
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          <Input 
+            label="Mot de passe" 
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            placeholder="Laissez vide pour ne pas modifier"
+          />
+          
+          {error && <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>}
+          
+          <ButtonFull 
+            text={saving ? "Modification en cours..." : "Modifier"} 
+            onPress={handleUpdateUser}
+            disabled={saving}
+          />
         </View>
       </ScrollView>
     </>
@@ -33,6 +127,13 @@ const styles = StyleSheet.create({
   formContainer: {
     gap: 16,
     marginBottom: 24,
+  },
+  errorContainer: {
+    marginVertical: 8,
+  },
+  errorText: {
+    color: "#FF6161",
+    textAlign: "center",
   },
 });
 

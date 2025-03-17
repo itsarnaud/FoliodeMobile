@@ -4,7 +4,10 @@ interface ButtonFullProps {
   onPress?: () => void;
   text: string;
   style?: any;
+  disabled?: boolean;
+
 }
+
 
 export function ButtonFull({ onPress, text, style }: ButtonFullProps) {
   return (
