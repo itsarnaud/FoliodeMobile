@@ -5,9 +5,11 @@ import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
 import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { globalStyles } from "@/app/styles/styles";
 import { Input } from "@/app/components/ui/Input";
-import { getUser, updateUser } from "@/app/utils/api.service";
+import { updateUser } from "@/app/utils/api.service";
+import { useUserData } from "@/app/utils/tokenData";
 
 const Profile = () => {
+  const userData = useUserData();
   const [lastname, setLastname] = useState("");
   const [firstname, setFirstname] = useState("");
   const [username, setUsername] = useState("");
@@ -17,27 +19,13 @@ const Profile = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchUserData();
-  }, []);
-
-  const fetchUserData = async () => {
-    try {
-      setSaving(true);
-      const userData = await getUser();
-      
+    if (userData) {
       setLastname(userData.lastname || "");
       setFirstname(userData.firstname || "");
       setUsername(userData.username || "");
       setEmail(userData.email || "");
-      
-      setError(null);
-    } catch (err) {
-      console.error("Erreur lors de la récupération des données utilisateur:", err);
-      setError("Impossible de récupérer les données utilisateur");
-    } finally {
-      setSaving(false);
     }
-  };
+  }, [userData]);
 
   const handleUpdateUser = async () => {
     if (!username.trim() || !email.trim()) {
@@ -49,7 +37,7 @@ const Profile = () => {
       setSaving(true);
       setError(null);
       
-      const userData = {
+      const updatedUserData = {
         lastname,
         firstname,
         username,
@@ -57,7 +45,7 @@ const Profile = () => {
         ...(password.trim() !== "" && { password })
       };
       
-      await updateUser(userData);
+      await updateUser(updatedUserData);
       
       setPassword("");
     } catch (err) {
@@ -67,6 +55,20 @@ const Profile = () => {
       setSaving(false);
     }
   };
+
+  if (!userData) {
+    return (
+      <>
+        <HeaderLogo />
+        <ScrollView style={globalStyles.containerPage}>
+          <HeaderTitle
+            title="Profil"
+            description="Chargement des informations..."
+          />
+        </ScrollView>
+      </>
+    );
+  }
 
   return (
     <>
