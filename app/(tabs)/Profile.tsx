@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, ScrollView, Text } from "react-native";
 import { ButtonFull } from "@/app/components/ui/ButtonFull";
 import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
@@ -17,15 +17,18 @@ const Profile = () => {
   const [password, setPassword] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // Utiliser un useEffect avec une vérification pour n'initialiser qu'une seule fois
   useEffect(() => {
-    if (userData) {
+    if (userData && !isInitialized) {
       setLastname(userData.lastname || "");
       setFirstname(userData.firstname || "");
       setUsername(userData.username || "");
       setEmail(userData.email || "");
+      setIsInitialized(true);
     }
-  }, [userData]);
+  }, [userData, isInitialized]);
 
   const handleUpdateUser = async () => {
     if (!username.trim() || !email.trim()) {
@@ -117,7 +120,6 @@ const Profile = () => {
           <ButtonFull 
             text={saving ? "Modification en cours..." : "Modifier"} 
             onPress={handleUpdateUser}
-            disabled={saving}
           />
         </View>
       </ScrollView>

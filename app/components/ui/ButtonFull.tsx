@@ -5,7 +5,6 @@ interface ButtonFullProps {
   text: string;
   style?: any;
   disabled?: boolean;
-
 }
 
 
