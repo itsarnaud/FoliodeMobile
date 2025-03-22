@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { getPortfolio, updatePortfolio, API_BASE_URL } from "@/app/utils/api.service";
 import { PortfolioData } from "@/app/interface/portfolioData";
 import { useAuth } from "./AuthContext";
@@ -7,7 +7,7 @@ interface PortfolioContextProps {
   portfolio: PortfolioData | null;
   loading: boolean;
   error: string | null;
-  fetchPortfolioData: () => Promise<void>;
+  fetchPortfolioData: (forceRefresh?: boolean) => Promise<void>;
   updatePortfolioSettings: (settings: Partial<PortfolioData>) => Promise<void>;
   getCompleteImageUrl: (imagePath: string) => string | null;
 }
@@ -27,32 +27,80 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Utiliser useRef pour suivre le dernier moment de chargement
+  const lastFetchTimeRef = useRef<number>(0);
+  // Référence pour suivre si le provider est monté
+  const isMountedRef = useRef<boolean>(true);
+  // Référence pour suivre si une requête est en cours
+  const isRequestInProgressRef = useRef<boolean>(false);
 
-  const fetchPortfolioData = async () => {
+  // Nettoyer lors du démontage
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const fetchPortfolioData = async (forceRefresh = false) => {
     if (!authState?.authenticated) return;
+    
+    // Éviter les requêtes simultanées
+    if (isRequestInProgressRef.current && !forceRefresh) {
+      return;
+    }
+
+    // Éviter les requêtes trop fréquentes (au moins 1 seconde entre chaque requête)
+    const now = Date.now();
+    if (!forceRefresh && now - lastFetchTimeRef.current < 1000) {
+      return;
+    }
+
     try {
+      isRequestInProgressRef.current = true;
       setLoading(true);
+      lastFetchTimeRef.current = now;
+      
+      // Récupérer les données fraîches du serveur
       const data = await getPortfolio();
-      setPortfolio(data);
-      setError(null);
+      
+      // Vérifier si le composant est toujours monté avant de mettre à jour l'état
+      if (isMountedRef.current) {
+        setPortfolio(data);
+        setError(null);
+      }
     } catch (err) {
-      setError("Erreur lors du chargement du portfolio");
+      console.error("Erreur lors du chargement du portfolio:", err);
+      if (isMountedRef.current) {
+        setError("Erreur lors du chargement du portfolio");
+      }
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
+      isRequestInProgressRef.current = false;
     }
   };
 
   const updatePortfolioSettings = async (settings: Partial<PortfolioData>) => {
+    if (isRequestInProgressRef.current) return;
+    
     try {
+      isRequestInProgressRef.current = true;
       setLoading(true);
       await updatePortfolio(settings);
-      await fetchPortfolioData();
+      await fetchPortfolioData(true);
     } catch (err) {
       console.error("Erreur lors de la mise à jour du portfolio:", err);
-      setError("Impossible de mettre à jour les paramètres du portfolio");
+      if (isMountedRef.current) {
+        setError("Impossible de mettre à jour les paramètres du portfolio");
+      }
       throw err;
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
+      isRequestInProgressRef.current = false;
     }
   };
 
@@ -62,8 +110,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return `${API_BASE_URL}/${imagePath}`;
   };
 
+  // Chargement initial du portfolio une seule fois à la connexion
   useEffect(() => {
-    if (authState?.authenticated) {
+    if (authState?.authenticated && !portfolio && !loading && !isRequestInProgressRef.current) {
       fetchPortfolioData();
     }
   }, [authState?.authenticated]);

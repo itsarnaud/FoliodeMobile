@@ -1,19 +1,50 @@
-import React from "react";
-import { View, StyleSheet, ScrollView, Text, ActivityIndicator } from "react-native";
+import React, { useCallback, useRef, useState, useEffect } from "react";
+import { View, StyleSheet, ScrollView, Text, ActivityIndicator, RefreshControl } from "react-native";
 import { globalStyles } from "../styles/styles";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 
 import { Card } from "@/app/components/ui/Card";
 import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
-import { ProjectCard } from "@/app/components/ui/ProjectCardItem";
 import { useUserData } from "@/app/utils/tokenData";
 import { usePortfolio } from "@/app/context/PortfolioContext";
+import ProjectDisplay from '@/app/components/ui/ProjectDisplay';
 
 const Dashboard = () => {
   const userData = useUserData();
-  const { portfolio, loading, error, getCompleteImageUrl } = usePortfolio();
-  const router = useRouter(); 
+  const { portfolio, loading, error, getCompleteImageUrl, fetchPortfolioData } = usePortfolio();
+  const router = useRouter();
+  const [refreshing, setRefreshing] = useState(false);
+  // Utiliser useRef pour suivre si le composant est monté
+  const isMountedRef = useRef(true);
+  // Un flag pour suivre si les données ont déjà été chargées
+  const dataLoadedRef = useRef(false);
+
+  // Nettoyer lors du démontage
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  // Fonction de rafraîchissement à la demande
+  const onRefresh = useCallback(async () => {
+    if (!isMountedRef.current) return;
+    setRefreshing(true);
+    await fetchPortfolioData(true); // Force refresh
+    if (isMountedRef.current) {
+      setRefreshing(false);
+    }
+  }, [fetchPortfolioData]);
+
+  // Remplacer l'usage de useFocusEffect pour éviter les cycles
+  useFocusEffect(
+    useCallback(() => {
+      // Appel unique lors du focus
+      fetchPortfolioData(false);
+      // Aucune dépendance ici pour ne pas réexécuter à chaque mise à jour
+    }, [])
+  );
 
   const handleProjectPress = (projectTitle: string, projectId: string) => {
     router.push({
@@ -29,7 +60,17 @@ const Dashboard = () => {
   return (
     <>
       <HeaderLogo />
-      <ScrollView style={globalStyles.containerPage}>
+      <ScrollView 
+        style={globalStyles.containerPage}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#3E3F92"]}
+            tintColor="#3E3F92"
+          />
+        }
+      >
         <HeaderTitle
           title={`Bonjour, ${userData.firstname}`}
           description={
@@ -58,51 +99,19 @@ const Dashboard = () => {
               <Card title="Nombre de projets" note={portfolio.projects ? portfolio.projects.length.toString() : "0"} />
             </View>
 
-            <ProjectDisplay
-              projects={portfolio.projects}
-              getCompleteImageUrl={getCompleteImageUrl}
-              onArrowPress={handleProjectPress}
-            />
+            {portfolio.projects && (
+              <ProjectDisplay
+                projects={portfolio.projects}
+                getCompleteImageUrl={getCompleteImageUrl}
+                onArrowPress={handleProjectPress}
+                headerTitle="Vos projets"
+                voirplus="Voir plus"
+              />
+            )}
           </>
         ) : null}
       </ScrollView>
     </>
-  );
-};
-
-interface ProjectItem {
-  title: string;
-  description?: string;
-  projectsImages?: { img_src: string }[];
-  id: string;
-}
-  
-interface ProjectDisplayProps {
-  projects: ProjectItem[];
-  getCompleteImageUrl: (imagePath: string) => string | null;
-  onArrowPress: (title: string, id: string) => void;
-}
-
-const ProjectDisplay: React.FC<ProjectDisplayProps> = ({ projects, getCompleteImageUrl, onArrowPress }) => {
-  return projects && projects.length > 0 ? (
-    <ProjectCard
-      headerTitle="Vos projets"
-      voirplus="Voir plus"
-      data={projects.map((project: ProjectItem) => ({
-        title: project.title,
-        subtitle: project.description || "",
-        image:
-          project.projectsImages && project.projectsImages.length > 0
-            ? getCompleteImageUrl(project.projectsImages[0].img_src)
-            : null,
-        id: project.id
-      }))}
-      onArrowPress={onArrowPress}
-    />
-  ) : (
-    <Text style={styles.noProjectsText}>
-      Aucun projet trouvé. Ajoutez des projets dans l'onglet Ajouter.
-    </Text>
   );
 };
 

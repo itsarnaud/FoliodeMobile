@@ -1,7 +1,7 @@
 import axios from "axios";
 import { PortfolioData } from "../interface/portfolioData";
 
-export const API_BASE_URL = "http://192.168.87.143:8081";
+export const API_BASE_URL = "http://192.168.1.22:8080";
 const API_PATH = `${API_BASE_URL}/api`;
 
 const prepareImageFile = (imageUri: string | null): any => {
@@ -153,6 +153,62 @@ export const updatePortfolio = async (settings: Partial<any>) => {
     return response.data;
   } catch (error) {
     console.error("Erreur lors de la mise à jour du portfolio:", error);
+    throw error;
+  }
+};
+
+/**
+ * Met à jour un projet existant
+ * @param id - ID du projet
+ * @param projectData - Données du projet
+ * @param imageUri - URI de l'image à associer au projet
+ */
+export const updateProject = async (
+  id: string, 
+  projectData: { title: string; description: string; links?: { name: string; url: string }[] },
+  imageUri?: string | null
+) => {
+  try {
+    const formData = new FormData();
+    
+    // Convertir les liens en format attendu par l'API
+    const projectsLinks = projectData.links && projectData.links.length > 0 
+      ? projectData.links.map(link => ({
+          name: link.name,
+          url: link.url
+        }))
+      : [];
+    
+    // Ajouter les données du projet en JSON
+    formData.append(
+      "json",
+      JSON.stringify({
+        title: projectData.title,
+        description: projectData.description,
+        projectsLinks: projectsLinks,
+      })
+    );
+    
+    // Ajouter l'image si présente
+    if (imageUri) {
+      formData.append("images[0]", prepareImageFile(imageUri) as any);
+    }
+    
+    // Envoyer la requête avec l'en-tête d'authentification
+    const response = await axios.post(
+      `${API_PATH}/project/${id}`, 
+      formData, 
+      {
+        headers: {
+          ...getAuthHeader(),
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du projet:", error);
     throw error;
   }
 };
