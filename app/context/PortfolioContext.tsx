@@ -139,6 +139,17 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, [authState?.authenticated]);
 
+  // Réinitialiser les données lors d'une nouvelle connexion
+  useEffect(() => {
+    if (authState?.authenticated) {
+      // Vider le portfolio et réinitialiser le flag pour obtenir les données du nouveau compte
+      setPortfolio(null);
+      dataLoadedRef.current = false;
+      // Optionnel : déclencher immédiatement un fetch pour charger les infos du nouveau compte
+      fetchPortfolioData(true);
+    }
+  }, [authState]);
+
   const value = {
     portfolio,
     loading,

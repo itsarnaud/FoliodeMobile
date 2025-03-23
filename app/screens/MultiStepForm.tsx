@@ -98,7 +98,8 @@ const MultiStepFormContent = () => {
       }
 
       console.log("Tout envoyé avec succès.");
-      await fetchPortfolioData();
+      // Forcer un fetch des données pour le nouveau compte
+      await fetchPortfolioData(true);
       router.push("(tabs)/Dashboard");
     } catch (error) {
       console.error("Erreur lors de l'envoi final :", error);
