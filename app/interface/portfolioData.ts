@@ -10,4 +10,9 @@ export interface PortfolioData {
     projectsImages?: { img_src: string }[];
     links?: { name: string; url: string }[];
   }[];
+  tools?: {
+    id: string;
+    name: string;
+    image?: string | null;
+  }[];
 }

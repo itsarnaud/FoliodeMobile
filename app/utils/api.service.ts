@@ -212,3 +212,20 @@ export const updateProject = async (
     throw error;
   }
 };
+
+/**
+ * Supprime un projet existant
+ * @param id - ID du projet à supprimer
+ */
+export const deleteProject = async (id: string) => {
+  try {
+    const response = await axios.delete(
+      `${API_PATH}/project/${id}`,
+      { headers: getAuthHeader() }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la suppression du projet:", error);
+    throw error;
+  }
+};

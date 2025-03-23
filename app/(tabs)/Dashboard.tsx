@@ -12,7 +12,7 @@ import ProjectDisplay from '@/app/components/ui/ProjectDisplay';
 
 const Dashboard = () => {
   const userData = useUserData();
-  const { portfolio, loading, error, getCompleteImageUrl, fetchPortfolioData } = usePortfolio();
+  const { portfolio, loading, error, getCompleteImageUrl, fetchPortfolioData, needsRefresh, clearNeedsRefresh } = usePortfolio();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   // Utiliser useRef pour suivre si le composant est monté
@@ -37,13 +37,14 @@ const Dashboard = () => {
     }
   }, [fetchPortfolioData]);
 
-  // Remplacer l'usage de useFocusEffect pour éviter les cycles
+  // Utiliser useFocusEffect uniquement pour le premier chargement
   useFocusEffect(
     useCallback(() => {
-      // Appel unique lors du focus
-      fetchPortfolioData(false);
-      // Aucune dépendance ici pour ne pas réexécuter à chaque mise à jour
-    }, [])
+      if (needsRefresh) {
+        fetchPortfolioData(true);
+        clearNeedsRefresh();
+      }
+    }, [needsRefresh])
   );
 
   const handleProjectPress = (projectTitle: string, projectId: string) => {

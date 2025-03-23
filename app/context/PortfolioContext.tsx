@@ -10,6 +10,9 @@ interface PortfolioContextProps {
   fetchPortfolioData: (forceRefresh?: boolean) => Promise<void>;
   updatePortfolioSettings: (settings: Partial<PortfolioData>) => Promise<void>;
   getCompleteImageUrl: (imagePath: string) => string | null;
+  needsRefresh: boolean;
+  markNeedsRefresh: () => void;
+  clearNeedsRefresh: () => void;
 }
 
 const PortfolioContext = createContext<PortfolioContextProps | undefined>(undefined);
@@ -27,6 +30,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [needsRefresh, setNeedsRefresh] = useState<boolean>(false);
+  const markNeedsRefresh = () => setNeedsRefresh(true);
+  const clearNeedsRefresh = () => setNeedsRefresh(false);
   
   // Utiliser useRef pour suivre le dernier moment de chargement
   const lastFetchTimeRef = useRef<number>(0);
@@ -34,6 +40,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const isMountedRef = useRef<boolean>(true);
   // Référence pour suivre si une requête est en cours
   const isRequestInProgressRef = useRef<boolean>(false);
+  // Référence pour suivre si les données ont déjà été chargées
+  const dataLoadedRef = useRef<boolean>(false);
 
   // Nettoyer lors du démontage
   useEffect(() => {
@@ -47,6 +55,11 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     
     // Éviter les requêtes simultanées
     if (isRequestInProgressRef.current && !forceRefresh) {
+      return;
+    }
+
+    // Si les données sont déjà chargées et qu'on ne force pas le rafraîchissement, ne rien faire
+    if (dataLoadedRef.current && !forceRefresh) {
       return;
     }
 
@@ -68,6 +81,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (isMountedRef.current) {
         setPortfolio(data);
         setError(null);
+        // Marquer les données comme chargées
+        dataLoadedRef.current = true;
       }
     } catch (err) {
       console.error("Erreur lors du chargement du portfolio:", err);
@@ -112,8 +127,15 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Chargement initial du portfolio une seule fois à la connexion
   useEffect(() => {
-    if (authState?.authenticated && !portfolio && !loading && !isRequestInProgressRef.current) {
+    if (authState?.authenticated && !portfolio && !loading && !isRequestInProgressRef.current && !dataLoadedRef.current) {
       fetchPortfolioData();
+    }
+  }, [authState?.authenticated]);
+  
+  // Réinitialiser le flag de données chargées lors de la déconnexion
+  useEffect(() => {
+    if (!authState?.authenticated) {
+      dataLoadedRef.current = false;
     }
   }, [authState?.authenticated]);
 
@@ -123,7 +145,10 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     error,
     fetchPortfolioData,
     updatePortfolioSettings,
-    getCompleteImageUrl
+    getCompleteImageUrl,
+    needsRefresh,
+    markNeedsRefresh,
+    clearNeedsRefresh,
   };
 
   return (

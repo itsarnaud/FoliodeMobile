@@ -15,7 +15,7 @@ import { usePortfolio } from "@/app/context/PortfolioContext";
 import ProjectDisplay from '@/app/components/ui/ProjectDisplay';
 
 const Project = () => {
-  const { portfolio, loading, fetchPortfolioData, getCompleteImageUrl } = usePortfolio();
+  const { portfolio, loading, fetchPortfolioData, getCompleteImageUrl, markNeedsRefresh } = usePortfolio();
   const router = useRouter();
   const [projectTitle, setProjectTitle] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -38,10 +38,11 @@ const Project = () => {
     };
   }, []);
 
-  // Remplacer l'usage de useFocusEffect par un appel unique au focus
+  // Utiliser useFocusEffect uniquement pour le premier chargement
   useFocusEffect(
     useCallback(() => {
-      fetchPortfolioData(false);
+      // Aucune dépendance pour éviter les rechargements inutiles
+      // Le système de cache dans PortfolioContext empêchera les rechargements inutiles
     }, [])
   );
 
@@ -84,10 +85,8 @@ const Project = () => {
       const links = linkName && linkUrl ? [{ name: linkName, url: linkUrl }] : [];
       await createProject({ title: projectTitle, description: projectDescription, links }, projectImage);
       resetForm();
-      // Charger les données seulement après avoir ajouté un projet
-      if (isMountedRef.current) {
-        await fetchPortfolioData(true); // Force refresh après ajout
-      }
+      // Au lieu d'un fetch immédiat, on marque le portfolio comme devant être rafraîchi
+      markNeedsRefresh();
     } catch (err) {
       if (isMountedRef.current) {
         setError("Erreur lors de l'ajout du projet");

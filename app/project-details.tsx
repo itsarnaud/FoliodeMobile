@@ -11,11 +11,11 @@ import { InputFile } from "@/app/components/ui/InputFIle";
 import { ButtonFull } from "@/app/components/ui/ButtonFull";
 import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { usePortfolio } from "@/app/context/PortfolioContext";
-import { updateProject } from "@/app/utils/api.service";
+import { updateProject, deleteProject } from "@/app/utils/api.service";
 
 const ProjectDetails = () => {
   const { title, id } = useLocalSearchParams<{ title: string; id: string }>();
-  const { portfolio, loading, fetchPortfolioData, getCompleteImageUrl } = usePortfolio();
+  const { portfolio, loading, fetchPortfolioData, getCompleteImageUrl, markNeedsRefresh } = usePortfolio();
   const router = useRouter();
   
   const [projectTitle, setProjectTitle] = useState("");
@@ -110,6 +110,9 @@ const ProjectDetails = () => {
         }, 
         projectImage
       );
+      
+      // Plutôt que d'appeler fetchPortfolioData(true) immédiatement, on marque le besoin de rafraîchir
+      markNeedsRefresh();
       
       // Message de succès
       Alert.alert(
@@ -219,6 +222,41 @@ const ProjectDetails = () => {
             // disabled={saving}
           />
           
+          <ButtonFull 
+            text="Supprimer le projet" 
+            onPress={() => {
+              Alert.alert(
+                "Confirmation",
+                "Êtes-vous sûr de vouloir supprimer ce projet ?",
+                [
+                  { text: "Annuler", style: "cancel" },
+                  { 
+                    text: "Supprimer", 
+                    style: "destructive",
+                    onPress: async () => {
+                      try {
+                        setSaving(true);
+                        await deleteProject(id);
+                        markNeedsRefresh();
+                        Alert.alert("Succès", "Le projet a été supprimé avec succès");
+                        router.back();
+                      } catch (err) {
+                        console.error("Erreur lors de la suppression du projet:", err);
+                        setError("Erreur lors de la suppression du projet");
+                      } finally {
+                        if (isMountedRef.current) {
+                          setSaving(false);
+                        }
+                      }
+                    }
+                  }
+                ]
+              );
+            }}
+            style={styles.deleteButton}
+            // disabled={saving}
+          />
+          
           <TouchableOpacity 
             style={styles.cancelButton} 
             onPress={() => router.back()}
@@ -258,18 +296,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   errorText: {
-    color: "#FF6161",
+    color: "#FF6B6B",
     textAlign: "center",
     marginVertical: 10,
   },
   cancelButton: {
-    marginTop: 15,
-    padding: 12,
+    marginTop: 10,
+    padding: 15,
+    borderRadius: 13,
     alignItems: 'center',
   },
   cancelButtonText: {
-    color: "#3E3F92",
+    color: "#7D7E83",
     fontSize: 16,
+    fontWeight: '600',
+  },
+  deleteButton: {
+    backgroundColor: "#FF6B6B",
+    marginTop: 10,
   }
 });
 
