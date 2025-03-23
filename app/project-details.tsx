@@ -44,28 +44,28 @@ const ProjectDetails = () => {
 
   const loadProjectData = () => {
     if (portfolio && id) {
-      const project = portfolio.projects.find(p => p.id === id);
+      const project = portfolio.projects.find((p) => p.id === id);
       if (project) {
         setProjectTitle(project.title || "");
         setProjectDescription(project.description || "");
-        
-        // Gestion des liens
-        if (project.links && project.links.length > 0) {
-          setLinkName(project.links[0].name || "");
-          setLinkUrl(project.links[0].url || "");
+
+        // Utiliser 'projectsLinks' s'il existe, sinon utiliser 'links'
+        const linksData = (project as any).projectsLinks ?? project.links;
+        if (linksData && linksData.length > 0) {
+          setLinkName(linksData[0].name || "");
+          setLinkUrl(linksData[0].url || "");
         } else {
           setLinkName("");
           setLinkUrl("");
         }
-        
-        // Gestion de l'image
+
         if (project.projectsImages && project.projectsImages.length > 0) {
           const imageUrl = getCompleteImageUrl(project.projectsImages[0].img_src);
           setOriginalImage(imageUrl);
         } else {
           setOriginalImage(null);
         }
-        
+
         setIsLoading(false);
       }
     }
@@ -170,7 +170,7 @@ const ProjectDetails = () => {
       />
       
       <ScrollView style={globalStyles.containerPage}>
-        <HeaderTitle
+        <HeaderTitle style={{ marginTop: 10 }}
           title={title || "Détails du projet"}
           description="Vous pouvez modifier les détails de votre projet ici"
         />
