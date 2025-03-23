@@ -3,6 +3,17 @@ export interface PortfolioData {
   title: string;
   template: string;
   url?: string;
+  config?: {
+    colors?: {
+      primary: string;
+      secondary: string;
+      warning?: string;
+      success?: string;
+      info?: string;
+      light?: string;
+    };
+    font?: string;
+  };
   projects: {
     id: string;
     title: string;
