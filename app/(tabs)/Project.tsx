@@ -1,20 +1,22 @@
-import React, { useState } from "react";
-import { ScrollView, View, Text, StyleSheet, Image } from "react-native";
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import { ScrollView, View, Text, StyleSheet, Image, RefreshControl } from "react-native";
 import { globalStyles } from "@/app/styles/styles";
 import * as ImagePicker from "expo-image-picker";
+import { useRouter, useFocusEffect } from "expo-router";
 
 import { Input } from "@/app/components/ui/Input";
 import { TextArea } from "@/app/components/ui/TextArea";
 import { InputFile } from "@/app/components/ui/InputFIle";
 import { ButtonFull } from "@/app/components/ui/ButtonFull";
-import { ProjectCard } from "@/app/components/ui/ProjectCardItem";
 import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
 import { createProject } from "@/app/utils/api.service";
 import { usePortfolio } from "@/app/context/PortfolioContext";
+import ProjectDisplay from '@/app/components/ui/ProjectDisplay';
 
 const Project = () => {
-  const { portfolio, loading, fetchPortfolioData, getCompleteImageUrl } = usePortfolio();
+  const { portfolio, loading, fetchPortfolioData, getCompleteImageUrl, markNeedsRefresh } = usePortfolio();
+  const router = useRouter();
   const [projectTitle, setProjectTitle] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [linkName, setLinkName] = useState("");
@@ -22,6 +24,37 @@ const Project = () => {
   const [projectImage, setProjectImage] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  
+  // Utiliser useRef pour suivre si le composant est monté
+  const isMountedRef = useRef(true);
+  // Un flag pour suivre si les données ont déjà été chargées
+  const dataLoadedRef = useRef(false);
+
+  // Nettoyer lors du démontage
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  // Utiliser useFocusEffect uniquement pour le premier chargement
+  useFocusEffect(
+    useCallback(() => {
+      // Aucune dépendance pour éviter les rechargements inutiles
+      // Le système de cache dans PortfolioContext empêchera les rechargements inutiles
+    }, [])
+  );
+
+  // Fonction de rafraîchissement à la demande (pull-to-refresh)
+  const onRefresh = useCallback(async () => {
+    if (!isMountedRef.current) return;
+    setRefreshing(true);
+    await fetchPortfolioData(true); // Force refresh
+    if (isMountedRef.current) {
+      setRefreshing(false);
+    }
+  }, [fetchPortfolioData]);
 
   const handleSelectImage = async () => {
     try {
@@ -52,12 +85,24 @@ const Project = () => {
       const links = linkName && linkUrl ? [{ name: linkName, url: linkUrl }] : [];
       await createProject({ title: projectTitle, description: projectDescription, links }, projectImage);
       resetForm();
-      await fetchPortfolioData();
+      // Au lieu d'un fetch immédiat, on marque le portfolio comme devant être rafraîchi
+      markNeedsRefresh();
     } catch (err) {
-      setError("Erreur lors de l'ajout du projet");
+      if (isMountedRef.current) {
+        setError("Erreur lors de l'ajout du projet");
+      }
     } finally {
-      setSaving(false);
+      if (isMountedRef.current) {
+        setSaving(false);
+      }
     }
+  };
+
+  const handleProjectPress = (projectTitle: string, projectId: string) => {
+    router.push({
+      pathname: '/project-details',
+      params: { title: projectTitle, id: projectId }
+    });
   };
 
   const resetForm = () => {
@@ -72,7 +117,17 @@ const Project = () => {
     <>
       <HeaderLogo />
 
-     <ScrollView style={globalStyles.containerPage}>
+      <ScrollView 
+        style={globalStyles.containerPage}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#3E3F92"]}
+            tintColor="#3E3F92"
+          />
+        }
+      >
         <HeaderTitle
           title="Vos Projets"
           description="Vous pouvez ajouter vos projets ici"
@@ -123,15 +178,11 @@ const Project = () => {
             <Text style={styles.loadingText}>Chargement des projets...</Text>
           </View>
         ) : portfolio?.projects && portfolio.projects.length > 0 ? (
-          <ProjectCard
+          <ProjectDisplay
+            projects={portfolio.projects}
+            getCompleteImageUrl={getCompleteImageUrl}
+            onArrowPress={handleProjectPress}
             headerTitle="Vos Projets"
-            data={portfolio.projects.map(project => ({
-              title: project.title,
-              subtitle: project.description || "",
-              image: project.projectsImages && project.projectsImages.length > 0 
-                ? getCompleteImageUrl(project.projectsImages[0].img_src)
-                : null
-            }))}
           />
         ) : (
           <Text style={styles.noProjectsText}>Aucun projet disponible.</Text>

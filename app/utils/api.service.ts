@@ -156,3 +156,76 @@ export const updatePortfolio = async (settings: Partial<any>) => {
     throw error;
   }
 };
+
+/**
+ * Met à jour un projet existant
+ * @param id - ID du projet
+ * @param projectData - Données du projet
+ * @param imageUri - URI de l'image à associer au projet
+ */
+export const updateProject = async (
+  id: string, 
+  projectData: { title: string; description: string; links?: { name: string; url: string }[] },
+  imageUri?: string | null
+) => {
+  try {
+    const formData = new FormData();
+    
+    // Convertir les liens en format attendu par l'API
+    const projectsLinks = projectData.links && projectData.links.length > 0 
+      ? projectData.links.map(link => ({
+          name: link.name,
+          url: link.url
+        }))
+      : [];
+    
+    // Ajouter les données du projet en JSON
+    formData.append(
+      "json",
+      JSON.stringify({
+        title: projectData.title,
+        description: projectData.description,
+        projectsLinks: projectsLinks,
+      })
+    );
+    
+    // Ajouter l'image si présente
+    if (imageUri) {
+      formData.append("images[0]", prepareImageFile(imageUri) as any);
+    }
+    
+    // Envoyer la requête avec l'en-tête d'authentification
+    const response = await axios.post(
+      `${API_PATH}/project/${id}`, 
+      formData, 
+      {
+        headers: {
+          ...getAuthHeader(),
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du projet:", error);
+    throw error;
+  }
+};
+
+/**
+ * Supprime un projet existant
+ * @param id - ID du projet à supprimer
+ */
+export const deleteProject = async (id: string) => {
+  try {
+    const response = await axios.delete(
+      `${API_PATH}/project/${id}`,
+      { headers: getAuthHeader() }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la suppression du projet:", error);
+    throw error;
+  }
+};

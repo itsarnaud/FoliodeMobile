@@ -6,15 +6,17 @@ interface ProjectCardItem {
   title: string;
   subtitle?: string;
   image: string | null;
+  id: string;
 }
 
 interface ProjectCardProps {
   headerTitle: string;
   voirplus?: string;
   data: ProjectCardItem[];
+  onArrowPress?: (title: string, id: string) => void;
 }
 
-export function ProjectCard({ headerTitle, data, voirplus }: ProjectCardProps) {
+export function ProjectCard({ headerTitle, data, voirplus, onArrowPress }: ProjectCardProps) {
   return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -37,7 +39,7 @@ export function ProjectCard({ headerTitle, data, voirplus }: ProjectCardProps) {
             </View>
           </View>
           <TouchableOpacity style={styles.containerArrow}
-            onPress={() => { /* ...actiononClick... */ }}>
+            onPress={() => onArrowPress && onArrowPress(project.title, project.id)}>
             <ArrowUpRight style={styles.arrow} size={22} />
           </TouchableOpacity>
         </View>
