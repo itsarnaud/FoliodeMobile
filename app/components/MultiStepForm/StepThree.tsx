@@ -62,8 +62,7 @@ const StepThree = ({
         id: Date.now().toString(),
         title,
         description,
-        linkName,
-        linkUrl,
+        links: linkName && linkUrl ? [{ name: linkName, url: linkUrl }] : [],
         image: projectImage
       };
       
@@ -91,7 +90,7 @@ const StepThree = ({
             title={project.title}
             subtitle={project.description}
             image={project.image}
-            additionalText={project.linkName ? `Lien: ${project.linkName}` : undefined}
+            additionalText={project.links && project.links.length > 0 ? `Lien: ${project.links[0].name}` : undefined}
             onRemove={handleRemoveProject}
             imageStyle={styles.projectImage}
             titleStyle={styles.projectTitle}

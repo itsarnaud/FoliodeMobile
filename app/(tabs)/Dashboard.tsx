@@ -1,17 +1,58 @@
-import React from "react";
-import { View, StyleSheet, ScrollView, Text, ActivityIndicator } from "react-native";
+import React, { useCallback, useRef, useState, useEffect } from "react";
+import { View, StyleSheet, ScrollView, Text, ActivityIndicator, RefreshControl } from "react-native";
 import { globalStyles } from "../styles/styles";
+import { useRouter, useFocusEffect } from "expo-router";
 
 import { Card } from "@/app/components/ui/Card";
 import { HeaderTitle } from "@/app/components/ui/HeaderTexte";
 import { HeaderLogo } from "@/app/components/ui/HeaderLogo";
-import { ProjectCard } from "@/app/components/ui/ProjectCardItem";
 import { useUserData } from "@/app/utils/tokenData";
 import { usePortfolio } from "@/app/context/PortfolioContext";
+import ProjectDisplay from '@/app/components/ui/ProjectDisplay';
 
 const Dashboard = () => {
   const userData = useUserData();
-  const { portfolio, loading, error, getCompleteImageUrl } = usePortfolio();
+  const { portfolio, loading, error, getCompleteImageUrl, fetchPortfolioData, needsRefresh, clearNeedsRefresh } = usePortfolio();
+  const router = useRouter();
+  const [refreshing, setRefreshing] = useState(false);
+  // Utiliser useRef pour suivre si le composant est monté
+  const isMountedRef = useRef(true);
+  // Un flag pour suivre si les données ont déjà été chargées
+  const dataLoadedRef = useRef(false);
+
+  // Nettoyer lors du démontage
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  // Fonction de rafraîchissement à la demande
+  const onRefresh = useCallback(async () => {
+    if (!isMountedRef.current) return;
+    setRefreshing(true);
+    await fetchPortfolioData(true); // Force refresh
+    if (isMountedRef.current) {
+      setRefreshing(false);
+    }
+  }, [fetchPortfolioData]);
+
+  // Utiliser useFocusEffect uniquement pour le premier chargement
+  useFocusEffect(
+    useCallback(() => {
+      if (needsRefresh) {
+        fetchPortfolioData(true);
+        clearNeedsRefresh();
+      }
+    }, [needsRefresh])
+  );
+
+  const handleProjectPress = (projectTitle: string, projectId: string) => {
+    router.push({
+      pathname: "/project-details",
+      params: { title: projectTitle, id: projectId }
+    });
+  };
 
   if (!userData) {
     return null;
@@ -20,12 +61,26 @@ const Dashboard = () => {
   return (
     <>
       <HeaderLogo />
-      <ScrollView style={globalStyles.containerPage}>
-      <HeaderTitle
+      <ScrollView 
+        style={globalStyles.containerPage}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#3E3F92"]}
+            tintColor="#3E3F92"
+          />
+        }
+      >
+        <HeaderTitle
           title={`Bonjour, ${userData.firstname}`}
-          description={portfolio?.url ? `Vous pouvez voir votre portfolio ici : ${portfolio.url}` : "Vous pouvez voir votre portfolio ici :"}
+          description={
+            portfolio?.url
+              ? `Vous pouvez voir votre portfolio ici : ${portfolio.url}`
+              : "Vous pouvez voir votre portfolio ici :"
+          }
         />
-        
+
         {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#3E3F92" />
@@ -44,44 +99,20 @@ const Dashboard = () => {
             <View style={{ marginBottom: 20 }}>
               <Card title="Nombre de projets" note={portfolio.projects ? portfolio.projects.length.toString() : "0"} />
             </View>
-            
-            <ProjectDisplay projects={portfolio.projects} getCompleteImageUrl={getCompleteImageUrl} />
+
+            {portfolio.projects && (
+              <ProjectDisplay
+                projects={portfolio.projects}
+                getCompleteImageUrl={getCompleteImageUrl}
+                onArrowPress={handleProjectPress}
+                headerTitle="Vos projets"
+                voirplus="Voir plus"
+              />
+            )}
           </>
         ) : null}
       </ScrollView>
     </>
-  );
-};
-
-interface ProjectItem {
-  title: string;
-  description?: string;
-  projectsImages?: { img_src: string }[];
-}
-
-interface ProjectDisplayProps {
-  projects: ProjectItem[];
-  getCompleteImageUrl: (imagePath: string) => string | null;
-}
-
-const ProjectDisplay: React.FC<ProjectDisplayProps> = ({ projects, getCompleteImageUrl }) => {
-  return projects && projects.length > 0 ? (
-    <ProjectCard
-      headerTitle="Vos projets"
-      voirplus="Voir plus"
-      data={projects.map((project: ProjectItem) => ({
-        title: project.title,
-        subtitle: project.description,
-        image:
-          project.projectsImages && project.projectsImages.length > 0
-            ? getCompleteImageUrl(project.projectsImages[0].img_src)
-            : null,
-      }))}
-    />
-  ) : (
-    <Text style={styles.noProjectsText}>
-      Aucun projet trouvé. Ajoutez des projets dans l'onglet Ajouter.
-    </Text>
   );
 };
 
@@ -114,7 +145,7 @@ const styles = StyleSheet.create({
     color: "#7D7E83",
     textAlign: "center",
     padding: 20,
-  }
+  },
 });
 
 export default Dashboard;

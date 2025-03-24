@@ -87,20 +87,19 @@ const MultiStepFormContent = () => {
           title: projectTitle,
           description: projectDescription,
           image: projectImage,
-          linkName: projectLinkName,
-          linkUrl: projectLinkUrl,
+          links: projectLinkName && projectLinkUrl ? [{ name: projectLinkName, url: projectLinkUrl }] : []
         });
       }
       for (const p of allProjects) {
-        const links = p.linkName && p.linkUrl ? [{ name: p.linkName, url: p.linkUrl }] : [];
         await createProject(
-          { title: p.title, description: p.description, links },
+          { title: p.title, description: p.description, links: p.links || [] },
           p.image
         );
       }
 
       console.log("Tout envoyé avec succès.");
-      await fetchPortfolioData();
+      // Forcer un fetch des données pour le nouveau compte
+      await fetchPortfolioData(true);
       router.push("(tabs)/Dashboard");
     } catch (error) {
       console.error("Erreur lors de l'envoi final :", error);
