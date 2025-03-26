@@ -16,17 +16,14 @@ const Edit = () => {
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Chargement initial des données
   useEffect(() => {
     fetchPortfolioData();
   }, []);
 
-  // Mise à jour des états locaux lorsque les données du portfolio sont chargées
   useEffect(() => {
     if (portfolio) {
       setSelectedTemplate(portfolio.template || null);
       
-      // Si un preset correspond à la configuration de couleurs actuelle, le sélectionner
       const currentPreset = templates.find(t => 
         t.color.primary === portfolio.config?.colors?.primary && 
         t.color.secondary === portfolio.config?.colors?.secondary
@@ -59,7 +56,6 @@ const Edit = () => {
         }
       });
       
-      // Rafraîchir les données pour confirmer les changements
       await fetchPortfolioData(true);
     } catch (error) {
       console.error("Erreur lors de la mise à jour des paramètres:", error);

@@ -21,29 +21,23 @@ const Skills = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   
-  // Utiliser useRef pour suivre si le composant est monté
   const isMountedRef = useRef(true);
 
-  // Nettoyer lors du démontage
   useEffect(() => {
     return () => {
       isMountedRef.current = false;
     };
   }, []);
 
-  // Utiliser useFocusEffect pour maintenir les données à jour
   useFocusEffect(
     useCallback(() => {
-      // Aucune dépendance pour éviter les rechargements inutiles
-      // Le système de cache dans PortfolioContext empêchera les rechargements inutiles
     }, [])
   );
 
-  // Fonction de rafraîchissement à la demande (pull-to-refresh)
   const onRefresh = useCallback(async () => {
     if (!isMountedRef.current) return;
     setRefreshing(true);
-    await fetchPortfolioData(true); // Force refresh
+    await fetchPortfolioData(true);
     if (isMountedRef.current) {
       setRefreshing(false);
     }
@@ -77,7 +71,6 @@ const Skills = () => {
       setError(null);
       await createSkills({ name: skillName }, skillImage);
       resetForm();
-      // Au lieu d'un fetch immédiat, on marque le portfolio comme devant être rafraîchi
       markNeedsRefresh();
     } catch (err) {
       if (isMountedRef.current) {
@@ -95,11 +88,10 @@ const Skills = () => {
     setSkillImage(null);
   };
 
-  // Préparer les données des compétences pour l'affichage
   const skillsData = portfolio?.tools?.map(tool => ({
     id: tool.id,
     title: tool.name,
-    image: tool.picto ? getCompleteImageUrl(tool.picto) : null
+    image: tool.image ? getCompleteImageUrl(tool.image) : null
   })) || [];
 
   return (
