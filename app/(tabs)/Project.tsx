@@ -26,31 +26,24 @@ const Project = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   
-  // Utiliser useRef pour suivre si le composant est monté
   const isMountedRef = useRef(true);
-  // Un flag pour suivre si les données ont déjà été chargées
   const dataLoadedRef = useRef(false);
 
-  // Nettoyer lors du démontage
   useEffect(() => {
     return () => {
       isMountedRef.current = false;
     };
   }, []);
 
-  // Utiliser useFocusEffect uniquement pour le premier chargement
   useFocusEffect(
     useCallback(() => {
-      // Aucune dépendance pour éviter les rechargements inutiles
-      // Le système de cache dans PortfolioContext empêchera les rechargements inutiles
     }, [])
   );
 
-  // Fonction de rafraîchissement à la demande (pull-to-refresh)
   const onRefresh = useCallback(async () => {
     if (!isMountedRef.current) return;
     setRefreshing(true);
-    await fetchPortfolioData(true); // Force refresh
+    await fetchPortfolioData(true);
     if (isMountedRef.current) {
       setRefreshing(false);
     }
@@ -85,7 +78,6 @@ const Project = () => {
       const links = linkName && linkUrl ? [{ name: linkName, url: linkUrl }] : [];
       await createProject({ title: projectTitle, description: projectDescription, links }, projectImage);
       resetForm();
-      // Au lieu d'un fetch immédiat, on marque le portfolio comme devant être rafraîchi
       markNeedsRefresh();
     } catch (err) {
       if (isMountedRef.current) {
