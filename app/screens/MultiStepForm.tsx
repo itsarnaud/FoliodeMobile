@@ -98,7 +98,6 @@ const MultiStepFormContent = () => {
       }
 
       console.log("Tout envoyé avec succès.");
-      // Forcer un fetch des données pour le nouveau compte
       await fetchPortfolioData(true);
       router.push("(tabs)/Dashboard");
     } catch (error) {
@@ -171,7 +170,7 @@ const MultiStepFormContent = () => {
       <ScrollView style={globalStyles.containerPage}>
         <HeaderTitle
           title="Configuration de votre projet"
-          description="Vous pouvez ajouter vos projets ici"
+          description="Vous pouvez configurer votre portfolio ici"
         />
         <View style={styles.containerProgress}>
           <View style={[styles.number, step >= 1 ? styles.active : styles.inactive]}>

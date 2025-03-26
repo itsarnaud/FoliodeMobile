@@ -28,7 +28,6 @@ const ProjectDetails = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Référence pour suivre si le composant est monté
   const isMountedRef = useRef<boolean>(true);
 
   useEffect(() => {
@@ -37,7 +36,6 @@ const ProjectDetails = () => {
     };
   }, []);
 
-  // Effets pour charger les données du projet
   useEffect(() => {
     loadProjectData();
   }, [portfolio, id]);
@@ -49,7 +47,6 @@ const ProjectDetails = () => {
         setProjectTitle(project.title || "");
         setProjectDescription(project.description || "");
 
-        // Utiliser 'projectsLinks' s'il existe, sinon utiliser 'links'
         const linksData = (project as any).projectsLinks ?? project.links;
         if (linksData && linksData.length > 0) {
           setLinkName(linksData[0].name || "");
@@ -111,10 +108,8 @@ const ProjectDetails = () => {
         projectImage
       );
       
-      // Plutôt que d'appeler fetchPortfolioData(true) immédiatement, on marque le besoin de rafraîchir
       markNeedsRefresh();
       
-      // Message de succès
       Alert.alert(
         "Succès",
         "Le projet a été mis à jour avec succès!",
@@ -122,7 +117,6 @@ const ProjectDetails = () => {
           { 
             text: "OK", 
             onPress: () => {
-              // Retour à l'écran précédent
               router.back();
             }
           }

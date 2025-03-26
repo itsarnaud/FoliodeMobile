@@ -15,29 +15,24 @@ const Dashboard = () => {
   const { portfolio, loading, error, getCompleteImageUrl, fetchPortfolioData, needsRefresh, clearNeedsRefresh } = usePortfolio();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
-  // Utiliser useRef pour suivre si le composant est monté
   const isMountedRef = useRef(true);
-  // Un flag pour suivre si les données ont déjà été chargées
   const dataLoadedRef = useRef(false);
 
-  // Nettoyer lors du démontage
   useEffect(() => {
     return () => {
       isMountedRef.current = false;
     };
   }, []);
 
-  // Fonction de rafraîchissement à la demande
   const onRefresh = useCallback(async () => {
     if (!isMountedRef.current) return;
     setRefreshing(true);
-    await fetchPortfolioData(true); // Force refresh
+    await fetchPortfolioData(true);
     if (isMountedRef.current) {
       setRefreshing(false);
     }
   }, [fetchPortfolioData]);
 
-  // Utiliser useFocusEffect uniquement pour le premier chargement
   useFocusEffect(
     useCallback(() => {
       if (needsRefresh) {
